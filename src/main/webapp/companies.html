@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Baltic Top Companies</title>
+</head>
+<body>
+<div id="companies_list"></div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+    $(document).ready(
+        function () {
+            // Käivitame selle koodi siis, kui HTML dokument lõplikult laetud.
+            // $('#companies_list').append('Hello World');
+            giveMeAllTheCompanies();
+        }
+    );
+
+    function giveMeAllTheCompanies() {
+        //Teeme AJAX pärinug ettevõte nimekirje pärimiseks Java EE rakendusest.
+        $.ajax(
+            {
+                method: "GET",
+                url: "/vali-it-webapp/rest/get_companies",
+                dataType: "json",
+
+                complete: function (response) {
+                    var companies = response.responseJSON;
+
+                    for (var i = 0; i < companies.length; i++) {
+                        $('#companies_list').append('<hr/>');
+                        $('#companies_list').append('<img src="' + companies[i].logo + '">' + '<br/>');
+                        $('#companies_list').append('Company name: ' + companies[i].name + '<br/>');
+                        $('#companies_list').append('Date of Establishemnt: ' + companies[i].established + '<br/>');
+                        $('#companies_list').append('Employee count: ' + companies[i].employeeCount + '<br/>');
+                    }
+                    // käivitatakse siis, kui päring on õnnestunud
+                    console.log('Jep, the AJAX method works!')
+                }
+            }
+        )
+
+    }
+
+</script>
+</body>
+</html>
