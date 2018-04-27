@@ -100,4 +100,34 @@ public class RestResource {
         return CompanyService.getCompanies();
     }
 
+    @GET
+    @Path("/get_company")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Company getCompany(@QueryParam("company_id") int companyID){
+
+
+
+        return CompanyService.getCompany(companyID);
+    }
+
+
+    @POST
+    @Path("/add_company")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
+    public String addCompany(Company company) {
+
+        CompanyService.addCompany(company);
+        return "OK";
+    }
+
+    @POST
+    @Path("/modify_company")
+    public String modifyCompany(Company company) {
+
+
+        return null;
+    }
+
+
 }

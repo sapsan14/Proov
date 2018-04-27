@@ -26,7 +26,8 @@ public class CompanyService {
             return null;
         }
     }
-    public static List<Company> getCompanies()  {
+
+    public static List<Company> getCompanies() {
         List<Company> companies = new ArrayList<Company>();
         try {
             ResultSet result = executeSql("select * from company");
@@ -41,16 +42,73 @@ public class CompanyService {
                     companies.add(company);
                 }
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
         return companies;
     }
 
+    public static void addCompany(Company company) {
+        //salvestame ettevõtte andmebaasi
+        if (companyNotExists(company.getName())) {
+            String sql = "INSERT INTO company (name, employee_count, established, logo) VALUES ('" + company.getName() + "' , " + company.getEmployeeCount() + " , '" + company.getEstablished() + "', '" + company.getLogo() + "')";
+            executeSql(sql);
+
+        }
+    }
+
+    public static void modifyCompany(Company company){
+        String sql = String.format("UPDATE company SET name = '%s', employee_count = %s, established = '%s', logo = '%s' WHERE id = %s", company.getName(), company.getEmployeeCount(), company.getEstablished(), company.getLogo(), company.getId());
+        executeSql(sql);
+    }
+
+    public static boolean companyNotExists(String name) {
+        return getCompanyByName(name) == null;
+    }
+
+    public static Company getCompanyByName(String name) {
+        try {
+            ResultSet result = executeSql("select id, name, employee_count, established, logo from company where name = '" + name + "'");
+            if (result != null) {
+                if (result.next()) {
+                    Company company = new Company();
+                    company.setId(result.getInt("id"));
+                    company.setName(result.getString("name"));
+                    company.setEmployeeCount(result.getInt("employee_count"));
+                    company.setEstablished(result.getString("established"));
+                    company.setLogo(result.getString("logo"));
+                    return company;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 
+    public static Company getCompany(int companyID) {
+        try {
+            String sql = "Select * from company where id =" + companyID;
+            ResultSet result = executeSql(sql);
+            if (result != null) {
+                if (result.next()) {
+                    Company company = new Company();
+                    company.setId(result.getInt("id"));
+                    company.setName(result.getString("name"));
+                    company.setEmployeeCount(result.getInt("employee_count"));
+                    company.setEstablished(result.getString("established"));
+                    company.setLogo(result.getString("logo"));
+                    return company;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
+        return null;
+    }
 }
 
 

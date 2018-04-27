@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Baltic Top Companies</title>
     <link rel="stylesheet" href="style/bootstrap.min.css"/>
+    <link rel="stylesheet" href="style/jquery-ui.css"/>
 </head>
 <body>
 <div class="container">
@@ -17,6 +18,7 @@
             <th scope="col">Name</th>
             <th scope="col">Date of Establishment</th>
             <th scope="col">Employees</th>
+            <th scope="col"></th>
         </tr>
         </thead>
         <tbody id="companies_list">
@@ -28,26 +30,30 @@
         Add Company
     </button>
 </div>
+<!--button, mis avab popupi, kus on juba placeholderitega valikud täitmiseks.  -->
 <!-- Modal -->
 <div class="modal fade" id="companyModal" tabindex="-1" role="dialog" aria-labelledby="companyModalLabel"
      aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <h5 class="modal-title" id="addCompany">Add Company</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
                 <input type="text" id="company_name_textbox" class="form-control" placeholder="Company Name"/><br/>
-                <input type="text" id="company_established_textbox" class="form-control" placeholder="Established"/><br/>
+                <input type="text" id="company_established_textbox" readonly="readonly" class="form-control"
+                       placeholder="Established"/><br/>
                 <input type="text" id="company_employees_textbox" class="form-control" placeholder="Employees"/><br/>
                 <input type="text" id="company_logo_textbox" class="form-control" placeholder="Logo"/><br/>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+                <button type="button" class="btn btn-primary" onclick="saveMyNewCompany()" data-dismiss="modal">Save
+                    changes
+                </button>
             </div>
         </div>
     </div>
@@ -56,10 +62,11 @@
 
 <script src="js/jquery.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
-
+<script src="js/jquery-ui.js"></script>
 <script>
     $(document).ready(
         function () {
+            initUiControls();
             // Käivitame selle koodi siis, kui HTML dokument lõplikult laetud.
             // $('#companies_list').append('Hello World');
             giveMeAllTheCompanies();
@@ -75,6 +82,7 @@
                 dataType: "json",
 
                 complete: function (response) {
+                    $('#companies_list').empty();
                     var companies = response.responseJSON;
 
                     for (var i = 0; i < companies.length; i++) {
@@ -85,6 +93,7 @@
                         companyRow = companyRow + "<td>" + companies[i].name + "</td>";
                         companyRow = companyRow + "<td>" + companies[i].established + "</td>";
                         companyRow = companyRow + "<td>" + companies[i].employeeCount + "</td>";
+                        companyRow = companyRow + '<td><button class="btn btn-sm" onclick="editMyCompany(' + companies[i].id + ');">Edit</button></td>';
                         companyRow = companyRow + "</tr>";
                         $('#companies_list').append(companyRow);
 
@@ -100,6 +109,65 @@
                 }
             }
         )
+    }
+
+    function saveMyNewCompany() {
+        $.ajax(
+            {
+                method: "POST",
+                url: "/vali-it-webapp/rest/add_company",
+                dataType: "json",
+                contentType: 'application/json',
+                data: JSON.stringify(
+                    {
+                        name: $('#company_name_textbox').val(),
+                        established: $('#company_established_textbox').val(),
+                        employeeCount: $('#company_employees_textbox').val() > 0 ? $('#company_employees_textbox').val() : 0,
+                        logo: $('#company_logo_textbox').val()
+                    }
+                ),
+                complete: function (response) {
+                    giveMeAllTheCompanies();
+                }
+            }
+        )
+    }
+
+    function initUiControls() {
+
+        $('#company_established_textbox').datepicker(
+            {
+                dateFormat: 'yy-mm-dd',
+                showButtonPanel: true,
+                changeMonth: true,
+                changeYear: true,
+                showOtherMonths: true,
+                selectOtherMonths: true,
+                yearRange: "-300:+0"
+            }
+        );
+    }
+
+    function editMyCompany(companyId) {
+        $.ajax(
+            {
+                method: "GET",
+                url: "/vali-it-webapp/rest/get_company?company_id=" + companyId,
+                dataType: "json",
+                contenType: 'application/json',
+                complete: function (response) {
+                    var company = response.responseJSON;
+                    $('#company_name_textbox').val(company.name);
+                    $('#company_established_textbox').val(company.established);
+                    $('#company_employees_textbox').val(company.employeeCount);
+                    $('#company_logo_textbox').val(company.logo);
+                    $('#companyModal').modal('show');
+
+                }
+
+            }
+        );
+
 
     }
 
