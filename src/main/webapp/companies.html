@@ -51,7 +51,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" onclick="saveMyNewCompany()" data-dismiss="modal">Save
+                <button type="button" class="btn btn-primary" onclick="saveChanges()" data-dismiss="modal">Save
                     changes
                 </button>
             </div>
@@ -111,7 +111,7 @@
         )
     }
 
-    function saveMyNewCompany() {
+    function saveChanges() {
         $.ajax(
             {
                 method: "POST",
