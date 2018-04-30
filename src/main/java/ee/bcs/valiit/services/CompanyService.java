@@ -52,14 +52,18 @@ public class CompanyService {
     public static void addCompany(Company company) {
         //salvestame ettevõtte andmebaasi
         if (companyNotExists(company.getName())) {
-            String sql = "INSERT INTO company (name, employee_count, established, logo) VALUES ('" + company.getName() + "' , " + company.getEmployeeCount() + " , '" + company.getEstablished() + "', '" + company.getLogo() + "')";
+            String sql = "INSERT INTO company (name, employee_count, established, logo)" +
+                    " VALUES ('" + company.getName() + "' , " + company.getEmployeeCount() + " , '"
+                    + company.getEstablished() + "', '" + company.getLogo() + "')";
             executeSql(sql);
 
         }
     }
 
     public static void modifyCompany(Company company){
-        String sql = String.format("UPDATE company SET name = '%s', employee_count = %s, established = '%s', logo = '%s' WHERE id = %s", company.getName(), company.getEmployeeCount(), company.getEstablished(), company.getLogo(), company.getId());
+        String sql = String.format("UPDATE company SET name = '%s', employee_count = %s, " +
+                "established = '%s', logo = '%s' WHERE id = %s", company.getName(), company.getEmployeeCount(),
+                company.getEstablished(), company.getLogo(), company.getId());
         executeSql(sql);
     }
 
@@ -108,6 +112,11 @@ public class CompanyService {
         }
 
         return null;
+    }
+
+    public static void deleteCompany(int companyId) {
+        String sql = "DELETE FROM company where id = " + companyId;
+        executeSql(sql);
     }
 }
 

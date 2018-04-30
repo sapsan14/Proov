@@ -123,11 +123,18 @@ public class RestResource {
 
     @POST
     @Path("/modify_company")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
     public String modifyCompany(Company company) {
-
-
-        return null;
+        CompanyService.modifyCompany(company);
+        return "OK";
     }
 
-
+    @POST
+    @Path("/delete_company")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String deleteCompany(@FormParam("company_id") int companyId){
+        CompanyService.deleteCompany(companyId);
+        return "OK";
+    }
 }

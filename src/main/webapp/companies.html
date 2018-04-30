@@ -19,6 +19,8 @@
             <th scope="col">Date of Establishment</th>
             <th scope="col">Employees</th>
             <th scope="col"></th>
+            <th scope="col"></th>
+
         </tr>
         </thead>
         <tbody id="companies_list">
@@ -26,7 +28,7 @@
         </tbody>
     </table>
     <!-- Button trigger modal -->
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#companyModal">
+    <button type="button" class="btn btn-primary" onclick="prepareMyCompanyAdd()">
         Add Company
     </button>
 </div>
@@ -43,6 +45,7 @@
                 </button>
             </div>
             <div class="modal-body">
+                <input type="hidden" id="company_id_field"/>
                 <input type="text" id="company_name_textbox" class="form-control" placeholder="Company Name"/><br/>
                 <input type="text" id="company_established_textbox" readonly="readonly" class="form-control"
                        placeholder="Established"/><br/>
@@ -93,16 +96,11 @@
                         companyRow = companyRow + "<td>" + companies[i].name + "</td>";
                         companyRow = companyRow + "<td>" + companies[i].established + "</td>";
                         companyRow = companyRow + "<td>" + companies[i].employeeCount + "</td>";
-                        companyRow = companyRow + '<td><button class="btn btn-sm" onclick="editMyCompany(' + companies[i].id + ');">Edit</button></td>';
+                        companyRow = companyRow + '<td><button class="btn btn-sm" onclick="prepareMyCompanyEdit(' + companies[i].id + ');">Edit</button></td>';
+                        companyRow = companyRow + '<td><button class="btn btn-sm btn-danger" onclick="deleteMyCompany(' + companies[i].id + ');">Remove</button></td>';
                         companyRow = companyRow + "</tr>";
                         $('#companies_list').append(companyRow);
 
-
-                        /*                        $('#companies_list').append('<hr/>');
-                                                $('#companies_list').append('<img src="' + companies[i].logo + '">' + '<br/>');
-                                                $('#companies_list').append('Company name: ' + companies[i].name + '<br/>');
-                                                $('#companies_list').append('Date of Establishemnt: ' + companies[i].established + '<br/>');
-                                                $('#companies_list').append('Employee count: ' + companies[i].employeeCount + '<br/>');*/
                     }
                     // käivitatakse siis, kui päring on õnnestunud
                     console.log('Jep, the AJAX method works!')
@@ -112,14 +110,23 @@
     }
 
     function saveChanges() {
+        var saveUrl = "";
+        if ($('#company_id_field').val() > 0) {
+            saveUrl = "/vali-it-webapp/rest/modify_company";
+        } else {
+            saveUrl = "/vali-it-webapp/rest/add_company";
+        }
+
+
         $.ajax(
             {
                 method: "POST",
-                url: "/vali-it-webapp/rest/add_company",
+                url: saveUrl,
                 dataType: "json",
                 contentType: 'application/json',
                 data: JSON.stringify(
                     {
+                        id: $('#company_id_field').val(),
                         name: $('#company_name_textbox').val(),
                         established: $('#company_established_textbox').val(),
                         employeeCount: $('#company_employees_textbox').val() > 0 ? $('#company_employees_textbox').val() : 0,
@@ -131,6 +138,25 @@
                 }
             }
         )
+    }
+
+    function deleteMyCompany(companyId) {
+        if(confirm("Are you sure, you want to delete the company?")){
+            $.ajax(
+                {
+                    method: "POST",
+                    url: "/vali-it-webapp/rest/delete_company",
+                    data:{
+                        "company_id" : companyId
+                    },
+                    complete: function (response) {
+                        giveMeAllTheCompanies();
+                    }
+                }
+            );
+        }
+
+
     }
 
     function initUiControls() {
@@ -148,7 +174,7 @@
         );
     }
 
-    function editMyCompany(companyId) {
+    function prepareMyCompanyEdit(companyId) {
         $.ajax(
             {
                 method: "GET",
@@ -157,6 +183,7 @@
                 contenType: 'application/json',
                 complete: function (response) {
                     var company = response.responseJSON;
+                    $('#company_id_field').val(company.id);
                     $('#company_name_textbox').val(company.name);
                     $('#company_established_textbox').val(company.established);
                     $('#company_employees_textbox').val(company.employeeCount);
@@ -169,6 +196,16 @@
         );
 
 
+    }
+
+
+    function prepareMyCompanyAdd(companyId) {
+                    $('#company_id_field').val("0");
+                    $('#company_name_textbox').val("");
+                    $('#company_established_textbox').val("");
+                    $('#company_employees_textbox').val("");
+                    $('#company_logo_textbox').val("");
+                    $('#companyModal').modal('show');
     }
 
 </script>
