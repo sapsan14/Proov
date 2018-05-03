@@ -23,7 +23,9 @@ import javax.ws.rs.core.Response;
 
 import ee.bcs.valiit.model.Company;
 import ee.bcs.valiit.model.MessageDTO;
+import ee.bcs.valiit.model.User;
 import ee.bcs.valiit.services.CompanyService;
+import ee.bcs.valiit.services.OmniMeterService;
 
 @Path("/")
 public class RestResource {
@@ -80,10 +82,10 @@ public class RestResource {
     public String getTextFromDb() throws SQLException, ClassNotFoundException {
         // Class.forName("com.mysql.cj.jdbc.Driver");
         Class.forName("org.mariadb.jdbc.Driver");
-        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/valiit", "root", "tere")) {
+        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "root", "tere")) {
             try (Statement stmt = conn.createStatement()) {
-                try (ResultSet rs = stmt.executeQuery("SELECT simple_column FROM simpledemo")) {
-                    rs.first();
+                try (ResultSet rs = stmt.executeQuery("SELECT id FROM meeting_owner")) {
+                    rs.next();
                     String result = rs.getString(1);
                     conn.close();
                     return result;
@@ -94,19 +96,49 @@ public class RestResource {
 
 
     @GET
-    @Path("/get_companies")
+    @Path("/get_users")
     @Produces(MediaType.APPLICATION_JSON) // anname välja formaadis APPLICATION_JSON
-    public List<Company> getCompanies() {
-        return CompanyService.getCompanies();
+    public List<User> getCompanies() {
+        return OmniMeterService.getUsers();
     }
+
+    @POST
+    @Path("/add_user")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
+    public String addUser(User user) {
+        OmniMeterService.addUser(user);
+        return "OK";
+    }
+
+    @POST
+    @Path("/modify_user")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
+    public String modifyUser(User user) {
+        OmniMeterService.modifyUser(user);
+        return "OK";
+    }
+    @GET
+    @Path("/get_user")
+    @Produces(MediaType.APPLICATION_JSON)
+    public User getUser(@QueryParam("user_id") int userId){
+        return OmniMeterService.getUser(userId);
+    }
+
+    @POST
+    @Path("/delete_user")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String deleteUser(@FormParam("user_id") int userId){
+        OmniMeterService.deleteUser(userId);
+        return "OK";
+    }
+
 
     @GET
     @Path("/get_company")
     @Produces(MediaType.APPLICATION_JSON)
     public Company getCompany(@QueryParam("company_id") int companyID){
-
-
-
         return CompanyService.getCompany(companyID);
     }
 
@@ -136,5 +168,13 @@ public class RestResource {
     public String deleteCompany(@FormParam("company_id") int companyId){
         CompanyService.deleteCompany(companyId);
         return "OK";
+    }
+
+    @GET
+    @Path("/give_feedback")
+    @Produces(MediaType.TEXT_PLAIN)
+    public int feedBackByNumber(@DefaultValue("") @QueryParam("feedBack") String feedBack) {
+        int a = Integer.parseInt(feedBack);
+        return a;
     }
 }

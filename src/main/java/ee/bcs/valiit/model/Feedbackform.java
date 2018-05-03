@@ -74,5 +74,14 @@ public class Feedbackform {
         this.comment = comment;
     }
 
+    public static int addNumber(String str1, String str2) {
+        int a = Integer.parseInt(str1);
+        int b = Integer.parseInt(str2);
+
+        int sum = a + b;
+        return sum;
+    }
+
+
 
 }

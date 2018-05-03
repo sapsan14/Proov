@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Users</title>
+    <link rel="stylesheet" href="style/bootstrap.min.css"/>
+    <link rel="stylesheet" href="style/jquery-ui.css"/>
+</head>
+<body>
+<div class="container">
+    <h1>List of all users</h1>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Id</th>
+            <th scope="col">First Name</th>
+            <th scope="col">Last Name</th>
+            <th scope="col">Password</th>
+            <th scope="col">Role</th>
+            <th scope="col">Department</th>
+            <th scope="col">Email</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+
+
+        </tr>
+        </thead>
+        <tbody id="users_list">
+
+        </tbody>
+    </table>
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" onclick="prepareUsersAddingInterface()">
+        Add User
+    </button>
+</div>
+<!--button, mis avab popupi, kus on juba placeholderitega valikud täitmiseks.
+Modal-->
+<div class="modal fade" id="userModal" tabindex="-1" role="dialog" aria-labelledby="userModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addUser">Add User</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="user_id_field"/>
+                <input type="text" id="user_first_name_textbox" class="form-control" placeholder="First Name"/><br/>
+                <input type="text" id="user_last_name_textbox" class="form-control" placeholder="Second Name"/><br/>
+                <input type="text" id="user_password_textbox" class="form-control" placeholder="Password"/><br/>
+                <input type="text" id="user_permission_textbox" class="form-control" placeholder="Role"/><br/>
+                <input type="text" id="user_department_textbox" class="form-control" placeholder="Department"/><br/>
+                <input type="text" id="user_email_textbox" class="form-control" placeholder="Email"/><br/>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="saveChanges()" data-dismiss="modal">Save
+                    changes
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/jquery-ui.js"></script>
+<script>
+    $(document).ready(
+        function () {
+            // initUiControls();
+            // Käivitame selle koodi siis, kui HTML dokument lõplikult laetud.
+            // $('#companies_list').append('Hello World');
+            giveAllUsers();
+        }
+    );
+
+    function giveAllUsers() {
+        //Teeme AJAX pärinug ettevõte nimekirje pärimiseks Java EE rakendusest.
+        $.ajax(
+            {
+                method: "GET",
+                url: "/rest/get_users",
+                dataType: "json",
+
+                complete: function (response) {
+                    $('#users_list').empty();
+                    var users = response.responseJSON;
+
+                    for (var i = 0; i < users.length; i++) {
+
+                        var userRow = "<tr>";
+                        userRow = userRow + "<td>" + users[i].id + "</td>";
+                        userRow = userRow + "<td>" + users[i].firstName + "</td>";
+                        userRow = userRow + "<td>" + users[i].lastName + "</td>";
+                        userRow = userRow + "<td>" + users[i].password + "</td>";
+                        userRow = userRow + "<td>" + users[i].persimissonsId + "</td>";
+                        userRow = userRow + "<td>" + users[i].department + "</td>";
+                        userRow = userRow + "<td>" + users[i].email + "</td>";
+                        userRow = userRow + '<td><button class="btn btn-sm" onclick="editUser(' + users[i].id + ');">Edit</button></td>';
+                        userRow = userRow + '<td><button class="btn btn-sm btn-danger" onclick="deleteUser(' + users[i].id + ');">Remove</button></td>';
+
+                        $('#users_list').append(userRow);
+
+                    }
+                    // käivitatakse siis, kui päring on õnnestunud
+                    console.log('Jep, the AJAX method works!')
+                }
+            }
+        )
+    }
+
+    function prepareUsersAddingInterface(userId) {
+        $('#users_id_field').val("0");
+        $('#user_first_name_textbox').val("");
+        $('#user_last_name_textbox').val("");
+        $('#user_email_textbox').val("");
+        $('#user_department_textbox').val("");
+        $('#user_password_textbox').val("");
+        $('#user_permission_textbox').val("");
+        $('#userModal').modal('show');
+    }
+
+    function saveChanges() {
+        var saveUrl = "";
+        if ($('#user_id_field').val() > 0) {
+            saveUrl = "/rest/modify_user";
+        } else {
+            saveUrl = "/rest/add_user";
+        }
+
+
+        $.ajax(
+            {
+                method: "POST",
+                url: saveUrl,
+                dataType: "json",
+                contentType: 'application/json',
+                data: JSON.stringify(
+                    {
+                        id: $('#user_id_field').val() > 0 ? $('#user_id_field').val() : "0",
+                        firstName: $('#user_first_name_textbox').val(),
+                        lastName: $('#user_last_name_textbox').val(),
+                        password: $('#user_password_textbox').val(),
+                        persimissonsId: $('#user_permission_textbox').val(),
+                        department: $('#user_department_textbox').val(),
+                        email: $('#user_email_textbox').val()
+                    }
+                ),
+                complete: function (response) {
+                    giveAllUsers();
+                }
+            }
+        )
+    }
+
+
+    function deleteUser(userId) {
+        if (confirm("Are you sure, you want to delete the user?")) {
+            $.ajax(
+                {
+                    method: "POST",
+                    url: "/rest/delete_user",
+                    data: {
+                        "user_id": userId
+                    },
+                    complete: function (response) {
+                        giveAllUsers();
+                    }
+                }
+            );
+        }
+
+
+    }
+
+    /*      function initUiControls() {
+
+              $('#company_established_textbox').datepicker(
+                  {
+                      dateFormat: 'yy-mm-dd',
+                      showButtonPanel: true,
+                      changeMonth: true,
+                      changeYear: true,
+                      showOtherMonths: true,
+                      selectOtherMonths: true,
+                      yearRange: "-300:+0"
+                  }
+              );
+          }*/
+
+    function editUser(userId) {
+        $.ajax(
+            {
+                method: "GET",
+                url: "/rest/get_user?user_id=" + userId,
+                dataType: "json",
+                contenType: 'application/json',
+                complete: function (response) {
+                    var user = response.responseJSON;
+                    $('#users_id_field').val(user.id);
+                    $('#user_first_name_textbox').val(user.first_name);
+                    $('#user_last_name_textbox').val(user.last_name);
+                    $('#user_email_textbox').val(user.email);
+                    $('#user_department_textbox').val(user.department);
+                    $('#user_password_textbox').val(user.password);
+                    $('#user_permission_textbox').val(user.role);
+                    $('#userModal').modal('show');
+
+                }
+
+            }
+        );
+
+
+    }
+
+
+</script>
+</body>
+</html>

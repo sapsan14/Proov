@@ -1,6 +1,7 @@
 package ee.bcs.valiit.services;
 
 import ee.bcs.valiit.model.Company;
+import ee.bcs.valiit.model.User;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -8,7 +9,7 @@ import java.util.List;
 
 public class CompanyService {
 
-    public static final String SQL_CONNECTION_URL = "jdbc:mysql://localhost:3306/companies";
+    public static final String SQL_CONNECTION_URL = "jdbc:mysql://localhost:3306/mydb";
     public static final String SQL_USERNAME = "root";
     public static final String SQL_PASSWORD = "tere";
 
@@ -27,27 +28,8 @@ public class CompanyService {
         }
     }
 
-    public static List<Company> getCompanies() {
-        List<Company> companies = new ArrayList<Company>();
-        try {
-            ResultSet result = executeSql("select * from company");
-            if (result != null) {
-                while (result.next()) {
-                    Company company = new Company();
-                    company.setId(result.getInt("id"));
-                    company.setName(result.getString("name"));
-                    company.setEmployeeCount(result.getInt("employee_count"));
-                    company.setEstablished(result.getString("established"));
-                    company.setLogo(result.getString("logo"));
-                    companies.add(company);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
 
-        return companies;
-    }
+
 
     public static void addCompany(Company company) {
         //salvestame ettevõtte andmebaasi

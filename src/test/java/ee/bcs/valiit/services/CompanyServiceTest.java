@@ -1,6 +1,6 @@
 package ee.bcs.valiit.services;
 
-import ee.bcs.valiit.model.Company;
+import ee.bcs.valiit.model.User;
 import org.junit.Test;
 
 import java.sql.ResultSet;
@@ -23,10 +23,5 @@ public class CompanyServiceTest {
         assertTrue(name.length() > 0);
 
     }
-    @Test
-    public void testGetCompanies(){
-        List<Company> companies = CompanyService.getCompanies();
-        assertTrue(companies.size() > 0);
-        assertTrue(companies.get(0).getName().length() > 0);
-    }
+
 }
