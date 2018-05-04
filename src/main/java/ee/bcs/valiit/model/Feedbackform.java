@@ -4,6 +4,9 @@ import java.util.Date;
 
 public class Feedbackform {
 
+
+
+    private int feedBackFormId;
     private int meetingId;
     private String meetingSubject;
     private Date meetingDateTime;
@@ -15,8 +18,16 @@ public class Feedbackform {
     public Feedbackform() {
 
     }
+    public int getFeedBackFormId() {
+        return feedBackFormId;
+    }
 
-    public Feedbackform(int meetingId, String meetingSubject, Date meetingDateTime, String meetingOrganizer, int feedBackAsNumber, String comment) {
+    public void setFeedBackFormId(int feedBackFormId) {
+        this.feedBackFormId = feedBackFormId;
+    }
+
+    public Feedbackform(int feedBackFormId, int meetingId, String meetingSubject, Date meetingDateTime, String meetingOrganizer, int feedBackAsNumber, String comment) {
+        this.feedBackFormId = getFeedBackFormId();
         this.meetingId = meetingId;
         this.meetingSubject = meetingSubject;
         this.meetingDateTime = meetingDateTime;

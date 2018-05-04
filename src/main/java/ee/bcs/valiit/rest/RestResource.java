@@ -21,9 +21,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import ee.bcs.valiit.model.Company;
-import ee.bcs.valiit.model.MessageDTO;
-import ee.bcs.valiit.model.User;
+import ee.bcs.valiit.model.*;
 import ee.bcs.valiit.services.CompanyService;
 import ee.bcs.valiit.services.OmniMeterService;
 
@@ -110,6 +108,23 @@ public class RestResource {
         OmniMeterService.addUser(user);
         return "OK";
     }
+
+    @POST
+    @Path("/add_feedback")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
+    public String addFeedback(Feedbackform feedback) {
+        OmniMeterService.addFeedBack(feedback);
+        return "OK";
+    }
+
+    @GET
+    @Path("/get_meeting_by_id")
+    @Produces(MediaType.APPLICATION_JSON) // anname välja formaadis APPLICATION_JSON
+    public Meeting getMeeting(@QueryParam("meeting_id") int meeting_id){
+        return OmniMeterService.getMeetingById(meeting_id);
+    }
+
 
     @POST
     @Path("/modify_user")

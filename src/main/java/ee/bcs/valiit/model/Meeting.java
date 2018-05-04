@@ -5,26 +5,34 @@ import java.util.List;
 
 public class Meeting {
 
+
+
+    private int meetingId;
     private int meetingOwnerId;
     private int meetingTypeId;
     private String subject;
-    private Date dateTimeForMeeting;
+    private String dateTimeForMeeting;
     private String detailsOfMeeting;
-    private List<String> listOfParticipants;
+//    private List<String> listOfParticipants;
 
     public Meeting() {
 
     }
-
-    public Meeting(int meetingOwnerId, int meetingTypeId, String subject, Date dateTimeForMeeting, String detailsOfMeeting, List listOfParticipants) {
+    public Meeting(int meetingOwnerId, int meetingTypeId, String subject, String dateTimeForMeeting, String detailsOfMeeting) {
         this.meetingOwnerId = meetingOwnerId;
         this.meetingTypeId = meetingTypeId;
         this.subject = subject;
         this.dateTimeForMeeting = dateTimeForMeeting;
         this.detailsOfMeeting = detailsOfMeeting;
-        this.listOfParticipants = listOfParticipants;
+//        this.listOfParticipants = listOfParticipants;
+    }
+    public int getMeetingId() {
+        return meetingId;
     }
 
+    public void setMeetingId(int meetingId) {
+        this.meetingId = meetingId;
+    }
     public int getMeetingOwnerId() {
         return meetingOwnerId;
     }
@@ -49,11 +57,11 @@ public class Meeting {
         this.subject = subject;
     }
 
-    public Date getDateTimeForMeeting() {
+    public String getDateTimeForMeeting() {
         return dateTimeForMeeting;
     }
 
-    public void setDateTimeForMeeting(Date dateTimeForMeeting) {
+    public void setDateTimeForMeeting(String dateTimeForMeeting) {
         this.dateTimeForMeeting = dateTimeForMeeting;
     }
 
@@ -65,13 +73,13 @@ public class Meeting {
         this.detailsOfMeeting = detailsOfMeeting;
     }
 
-    public List<String> getListOfParticipants() {
-        return listOfParticipants;
-    }
+//    public List<String> getListOfParticipants() {
+//        return listOfParticipants;
+//    }
 
-    public void setListOfParticipants(List<String> listOfParticipants) {
-        this.listOfParticipants = listOfParticipants;
-    }
+//    public void setListOfParticipants(List<String> listOfParticipants) {
+//        this.listOfParticipants = listOfParticipants;
+//    }
 
 
 }

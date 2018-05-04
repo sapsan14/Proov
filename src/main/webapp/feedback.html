@@ -1,11 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="style/styles.css">
     <meta charset="UTF-8">
     <title>Feedback</title>
 </head>
 <body>
-<div></div>
-Test
+<div class="meeting_owner_name">
+    <p>Koosoleku koostaja: <span id="meeting_holder_by_name"></span></p></br>
+</div>
+<div class="meeting">
+    <span id="meeting_holder_id" type="hidden"/>
+
+    <p>Koosoleku sisu:  <span id="meeting_subject"></span></p>
+    <p>Koosoleku toimumisaeg: <span id="meeting_time"></span></p>
+</div>
+
+<div class="txt-center">
+    <form>
+        <input type="hidden" id="feedbackForm_id_field"/>
+        <input type="hidden" id="meeting_id_field"/>
+        <ul class="rate-area">
+            <input type="radio" id="5-star" name="rating" value="5"/><label for="5-star" title="Amazing">5 stars</label>
+            <input type="radio" id="4-star" name="rating" value="4"/><label for="4-star" title="Good">4 stars</label>
+            <input type="radio" id="3-star" name="rating" value="3"/><label for="3-star" title="Average">3 stars</label>
+            <input type="radio" id="2-star" name="rating" value="2"/><label for="2-star" title="Not Good">2 stars</label>
+            <input type="radio" id="1-star" name="rating" value="1"/><label for="1-star" title="Bad">1 star</label>
+        </ul>
+    </form>
+    <form>
+        <div class="form-group">
+            <label class="comments" for="exampleFormControlTextarea1">Kommentaarid</label></br>
+            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" onclick="submitFeedBack()">Submit</button>
+    </form>
+</div>
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/jquery-ui.js"></script>
+<script>
+    $(document).ready(
+        function () {
+            // initUiControls();
+            // Käivitame selle koodi siis, kui HTML dokument lõplikult laetud.
+            // $('#companies_list').append('Hello World');
+            getMeetingInfo();
+            // getMeetingOwnerName();
+        }
+    );
+
+    /*    function submitFeedBack(){
+            $.ajax(
+                {
+                    method: "POST",
+                    url: "/rest/add_feedback",
+                    dataType: "json",
+                    contentType: 'application/json',
+                    data: JSON.stringify(
+                        {
+                            id: $('#user_id_field').val() > 0 ? $('#user_id_field').val() : "0",
+                            firstName: $('#user_first_name_textbox').val(),
+                            lastName: $('#user_last_name_textbox').val(),
+                            password: $('#user_password_textbox').val(),
+                            persimissonsId: $('#user_permission_textbox').val(),
+                            department: $('#user_department_textbox').val(),
+                            email: $('#user_email_textbox').val()
+                        }
+                    ),
+                    complete: function (response) {
+                        giveAllUsers();
+                    }
+                }
+            )
+
+        }*/
+
+    function getMeetingInfo() {
+        $.ajax(
+            {
+                method: "GET",
+                url: "/rest/get_meeting_by_id?meeting_id=" + 1,//meetingId - VAHETA ÄRA!!!!!,
+                dataType: "json",
+                complete: function (response) {
+                    var data = response.responseJSON;
+                    $('#meeting_holder_id').html(data.meetingOwnerId);
+                    $('#meeting_subject').html(data.subject);
+                    $('#meeting_time').html(data.dateTimeForMeeting);
+                    console.log('Jep, the AJAX method works!')
+                }
+
+            }
+        );
+    }
+
+/*    function getMeetingOwnerName(){
+        $.ajax(
+            {
+                method: "GET",
+                url: "/rest/get_user?user_id=" +  23,
+                dataType: "json",
+                contenType: 'application/json',
+                complete: function (response) {
+                    var user = response.responseJSON;
+                    $('#meeting_holder_by_name').val(user.firstName);
+                }
+
+            }
+        );
+
+    }*/
+
+
+</script>
+
 </body>
 </html>

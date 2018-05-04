@@ -1,0 +1,79 @@
+.meeting{
+    margin-top: 50px;
+    text-align: center;
+    width: 100%;
+}
+
+.txt-center {
+    text-align: center;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    /* bring your own prefixes */
+    transform: translate(-50%, -50%);
+}
+
+.rate-area {
+    float: left;
+    border-style: none;
+}
+
+.rate-area:not(:checked) > input {
+    position: absolute;
+    top: -9999px;
+    clip: rect(0, 0, 0, 0);
+}
+
+.rate-area:not(:checked) > label {
+    float: right;
+    width: 1em;
+    padding: 0 .1em;
+    overflow: hidden;
+    white-space: nowrap;
+    cursor: pointer;
+    font-size: 450%;
+    line-height: 1.2;
+    color: lightgrey;
+    text-shadow: 1px 1px #bbb;
+}
+
+.rate-area:not(:checked) > label:before {
+    content: '★ ';
+}
+
+.rate-area > input:checked ~ label {
+    color: gold;
+    text-shadow: 1px 1px #c60;
+    font-size: 450% !important;
+}
+
+.rate-area:not(:checked) > label:hover, .rate-area:not(:checked) > label:hover ~ label {
+    color: gold;
+}
+
+.rate-area > input:checked + label:hover, .rate-area > input:checked + label:hover ~ label, .rate-area > input:checked ~ label:hover, .rate-area > input:checked ~ label:hover ~ label, .rate-area > label:hover ~ input:checked ~ label {
+    color: gold;
+    text-shadow: 1px 1px goldenrod;
+}
+
+.rate-area > label:active {
+    position: relative;
+    top: 2px;
+    left: 2px;
+}
+
+.comments {
+    text-align: center;
+
+}
+
+.form-control {
+    border: gray;
+    border-style: groove;
+    width: 500px;
+    height: 200px;
+}
+
+.form-group {
+    margin-top: 50px;
+}

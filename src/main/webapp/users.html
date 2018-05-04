@@ -33,6 +33,7 @@
     <!-- Button trigger modal -->
     <button type="button" class="btn btn-primary" onclick="prepareUsersAddingInterface()">
         Add User
+
     </button>
 </div>
 <!--button, mis avab popupi, kus on juba placeholderitega valikud täitmiseks.
@@ -50,7 +51,7 @@ Modal-->
             <div class="modal-body">
                 <input type="hidden" id="user_id_field"/>
                 <input type="text" id="user_first_name_textbox" class="form-control" placeholder="First Name"/><br/>
-                <input type="text" id="user_last_name_textbox" class="form-control" placeholder="Second Name"/><br/>
+                <input type="text" id="user_last_name_textbox" class="form-control" placeholder="Last Name"/><br/>
                 <input type="text" id="user_password_textbox" class="form-control" placeholder="Password"/><br/>
                 <input type="text" id="user_permission_textbox" class="form-control" placeholder="Role"/><br/>
                 <input type="text" id="user_department_textbox" class="form-control" placeholder="Department"/><br/>
@@ -116,7 +117,7 @@ Modal-->
     }
 
     function prepareUsersAddingInterface(userId) {
-        $('#users_id_field').val("0");
+        $('#user_id_field').val("0");
         $('#user_first_name_textbox').val("");
         $('#user_last_name_textbox').val("");
         $('#user_email_textbox').val("");
@@ -203,13 +204,13 @@ Modal-->
                 contenType: 'application/json',
                 complete: function (response) {
                     var user = response.responseJSON;
-                    $('#users_id_field').val(user.id);
-                    $('#user_first_name_textbox').val(user.first_name);
-                    $('#user_last_name_textbox').val(user.last_name);
+                    $('#user_id_field').val(user.id);
+                    $('#user_first_name_textbox').val(user.firstName);
+                    $('#user_last_name_textbox').val(user.lastName);
                     $('#user_email_textbox').val(user.email);
                     $('#user_department_textbox').val(user.department);
                     $('#user_password_textbox').val(user.password);
-                    $('#user_permission_textbox').val(user.role);
+                    $('#user_permission_textbox').val(user.persimissonsId);
                     $('#userModal').modal('show');
 
                 }
