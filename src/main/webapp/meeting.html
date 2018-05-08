@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Meetings</title>
+    <link rel="stylesheet" href="style/bootstrap.min.css"/>
+    <link rel="stylesheet" href="style/jquery-ui.css"/>
+</head>
+<body>
+<div class="container">
+    <h1>List of all meetings</h1>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">UUID</th>
+            <th scope="col">Subject</th>
+            <th scope="col">Details</th>
+            <th scope="col">Date</th>
+            <th scope="col">Time</th>
+            <th scope="col">Type</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+
+
+        </tr>
+        </thead>
+        <tbody id="meetings_list">
+
+        </tbody>
+    </table>
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" onclick="prepareMeetingsAddingInterface()">
+        Add Meeting
+    </button>
+</div>
+<!--button, mis avab popupi, kus on juba placeholderitega valikud täitmiseks.
+Modal-->
+
+<div class="modal fade" id="meetingModal" tabindex="-1" role="dialog" aria-labelledby="meetingModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addMeeting">Add meeting</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="meeting_id_field"/>
+                <input type="hidden" id="meeting_uuid_field"/><br/>
+                <input type="text" id="meeting_subject_field" class="form-control" placeholder="subject"/><br/>
+                <input type="text" id="meeting_details_field" class="form-control" placeholder="details"/><br/>
+                <input type="text" id="meeting_type_field" class="form-control" placeholder="type"/><br/>
+                <input type="text" id="meeting_date_field" class="form-control" readonly="readonly" placeholder="date"/><br/>
+                <input type="text" id="meeting_time_field" class="form-control" placeholder="time"/><br/>
+
+                <div class="form-group">
+                    <label class="font-normal">
+                        Meeting type
+                    </label>
+                    <div class="input-group">
+                        <select id="type_selection" data-placeholder=" Select type..."
+                                class="form-control chosen-select" style="width:350px;" tabindex="2">
+                            <option value="type1">
+                                1
+                            </option>
+                            <option value="type2">
+                                2
+                            </option>
+                            <option value="type3">
+                                3
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" onclick="saveChanges()" data-dismiss="modal">Save
+                changes
+            </button>
+        </div>
+    </div>
+</div>
+</div>
+
+
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/jquery-ui.js"></script>
+
+<script>
+    $(document).ready(
+        function () {
+            initUiControls();
+            // Käivitame selle koodi siis, kui HTML dokument lõplikult laetud.
+            // $('#companies_list').append('Hello World');
+            giveAllMeetings();
+
+        }
+    );
+
+
+    function giveAllMeetings() {
+        //Teeme AJAX pärinug kohtumiste nimekirje pärimiseks Java EE rakendusest.
+        $.ajax(
+            {
+                method: "GET",
+                url: "/rest/get_meetings?meeting_owner_id=2",
+                dataType: "json",
+
+                complete: function (response) {
+                    $('#meetings_list').empty();
+                    var meetings = response.responseJSON;
+
+                    for (var i = 0; i < meetings.length; i++) {
+
+                        var meetingRow = "<tr>";
+                        meetingRow = meetingRow + "<td>" + meetings[i].uniqueHash + "</td>";
+                        meetingRow = meetingRow + "<td>" + meetings[i].subject + "</td>";
+                        meetingRow = meetingRow + "<td>" + meetings[i].details + "</td>";
+                        meetingRow = meetingRow + "<td>" + meetings[i].date + "</td>";
+                        meetingRow = meetingRow + "<td>" + meetings[i].time + "</td>";
+                        meetingRow = meetingRow + "<td>" + meetings[i].type + "</td>";
+                        meetingRow = meetingRow + '<td><button class="btn btn-sm" onclick="editMeeting(' + meetings[i].uuid + ');">Edit</button></td>';
+                        meetingRow = meetingRow + '<td><button class="btn btn-sm btn-danger" onclick="deleteMeeting(' + meetings[i].id + ');">Remove</button></td>';
+
+                        $('#meetings_list').append(meetingRow);
+
+                    }
+                    // käivitatakse siis, kui päring on õnnestunud
+                    console.log('Jep, the AJAX method works!')
+                }
+            }
+        )
+    }
+
+    function prepareMeetingsAddingInterface(meetingUuid) {
+        $('#meeting_uuid').val("");
+        $('#meeting_subject_textbox').val("");
+        $('#meeting_details_textbox').val("");
+        $('#meeting_time').val("");
+        $('#meeting_type').val("");
+        $('#meetingModal').modal('show');
+    }
+
+    function saveChanges() {
+        var saveUrl = "";
+        if ($('#meeting_uuid').val() > 0) {
+            saveUrl = "/rest/modify_meeting";
+        } else {
+            saveUrl = "/rest/add_meeting";
+        }
+
+        var jsonObject = null;
+
+        if ($('#meeting_uuid').val() != "") {
+            jsonObject = {
+                meetingOwnerId: 2,// $('').val()tee ümber, et ei oleks alati 2.
+                uniqueHash: $('#meeting_uuid').val(),
+                subject: $('#meeting_subject_field').val(),
+                details: $('#meeting_details_field').val(),
+                date: $('#meeting_date_field').val(),
+                type: $('#meeting_type_field').val(),
+                time: $('#meeting_time_field').val(),
+            };
+        } else {
+            jsonObject = {
+                meetingOwnerId: 2,// $('').val()tee ümber, et ei oleks alati 2.
+                subject: $('#meeting_subject_field').val(),
+                details: $('#meeting_details_field').val(),
+                date: $('#meeting_date_field').val(),
+                type: $('#meeting_type_field').val(),
+                time: $('#meeting_time_field').val(),
+            };
+        }
+
+        $.ajax(
+            {
+                method: "POST",
+                url: saveUrl,
+                dataType: "json",
+                contentType: 'application/json',
+                data: JSON.stringify(jsonObject),
+                complete: function (response) {
+                    giveAllMeetings();
+                }
+            }
+        )
+    }
+
+    function deleteMeeting(meetingUuid) {
+        if (confirm("Are you sure, you want to delete the meeting?")) {
+            $.ajax(
+                {
+                    method: "POST",
+                    url: "/rest/delete_meeting",
+                    data: {
+                        "meeting_uuid": meetingUuid
+                    },
+                    complete: function (response) {
+                        giveAllMeetings();
+                    }
+                }
+            );
+        }
+
+
+    }
+
+    function initUiControls() {
+
+        $('#meeting_date_field').datepicker(
+            {
+                dateFormat: 'yy-mm-dd',
+                showButtonPanel: true,
+                changeMonth: true,
+                changeYear: true,
+                showOtherMonths: true,
+                selectOtherMonths: true,
+                yearRange: "-300:+0"
+            }
+        );
+
+
+        /*                  $('#meeting_time').timepicker(
+                              {
+                                  dateFormat: 'yy-mm-dd',
+                                  showButtonPanel: true,
+                                  changeMonth: true,
+                                  changeYear: true,
+                                  showOtherMonths: true,
+                                  selectOtherMonths: true,
+                                  yearRange: "-300:+0"
+                              }
+                          );*/
+    }
+
+
+    function editMeeting(meetingUuid) {
+        $.ajax(
+            {
+                method: "GET",
+                url: "/rest/get_meeting?meeting_uuid=" + meetingUuid,
+                dataType: "json",
+                contenType: 'application/json',
+                complete: function (response) {
+                    var meeting = response.responseJSON;
+                    $('#meeting_uuid_field').val(meeting.uuid);
+                    $('#meeting_subject_field').val(meeting.subject);
+                    $('#meeting_details_field').val(meeting.details);
+                    $('#meeting_date_field').val(meeting.date);
+                    $('#meeting_time_field').val(meeting.time);
+                    $('#meeting_type_field').val(meeting.meeting_type_id);
+                    $('#userModal').modal('show');
+
+                }
+
+            }
+        );
+
+
+    }
+
+
+</script>
+</body>
+</html>

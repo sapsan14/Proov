@@ -7,10 +7,11 @@ public class User {
     private int id;
     private String firstName;
     private String lastName;
-    private int persimissonsId;
+    private String persimissonsId;
     private String department;
     private String password;
     private String email;
+    private String role;
 
     public User() {
 
@@ -22,7 +23,7 @@ public class User {
             this.setFirstName(result.getString("first_name"));
             this.setLastName(result.getString("last_name"));
             this.setPassword(result.getString("password"));
-            this.setPersimissonsId(result.getInt("role"));
+            this.setPersimissonsId(result.getString("role_id"));
             this.setDepartment(result.getString("department"));
             this.setEmail(result.getString("email"));
         } catch (SQLException e) {
@@ -30,23 +31,16 @@ public class User {
         }
     }
 
-    public User(int id, String firstName, String lastName, int persimissonsId, String department, String password, String email) {
+    public User(int id, String firstName, String lastName, String password, String persimissonsId, String department, String email) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.password = password;
         this.persimissonsId = persimissonsId;
         this.department = department;
-        this.password = password;
         this.email = email;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
     public int getId() {
         return id;
     }
@@ -71,11 +65,19 @@ public class User {
         this.lastName = lastName;
     }
 
-    public int getPersimissonsId() {
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getPersimissonsId() {
         return persimissonsId;
     }
 
-    public void setPersimissonsId(int persimissonsId) {
+    public void setPersimissonsId(String persimissonsId) {
         this.persimissonsId = persimissonsId;
     }
 
@@ -87,13 +89,22 @@ public class User {
         this.department = department;
     }
 
-    public String getPassword() {
-        return password;
+    public String getEmail() {
+        return email;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setEmail(String email) {
+        this.email = email;
     }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
 
 
 }

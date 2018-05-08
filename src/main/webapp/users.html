@@ -33,7 +33,6 @@
     <!-- Button trigger modal -->
     <button type="button" class="btn btn-primary" onclick="prepareUsersAddingInterface()">
         Add User
-
     </button>
 </div>
 <!--button, mis avab popupi, kus on juba placeholderitega valikud täitmiseks.
@@ -53,7 +52,27 @@ Modal-->
                 <input type="text" id="user_first_name_textbox" class="form-control" placeholder="First Name"/><br/>
                 <input type="text" id="user_last_name_textbox" class="form-control" placeholder="Last Name"/><br/>
                 <input type="text" id="user_password_textbox" class="form-control" placeholder="Password"/><br/>
-                <input type="text" id="user_permission_textbox" class="form-control" placeholder="Role"/><br/>
+
+                <div class="form-group">
+                    <label class="font-normal">
+                        User role
+                    </label>
+                    <div class="input-group">
+                        <select id="role_selection" data-placeholder=" Select role..." class="form-control chosen-select" style="width:350px;" tabindex="2">
+                            <option value="admin">
+                                Admin (system admin)
+                            </option>
+                            <option value="user">
+                                User (Meeting organizer)
+                            </option>
+                            <option value="participant">
+                                Unregistered user (Meeting participant)
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+
                 <input type="text" id="user_department_textbox" class="form-control" placeholder="Department"/><br/>
                 <input type="text" id="user_email_textbox" class="form-control" placeholder="Email"/><br/>
             </div>
@@ -82,7 +101,7 @@ Modal-->
     );
 
     function giveAllUsers() {
-        //Teeme AJAX pärinug ettevõte nimekirje pärimiseks Java EE rakendusest.
+        //Teeme AJAX pärinug kasutajate pärimiseks Java EE rakendusest.
         $.ajax(
             {
                 method: "GET",
@@ -135,7 +154,6 @@ Modal-->
             saveUrl = "/rest/add_user";
         }
 
-
         $.ajax(
             {
                 method: "POST",
@@ -148,7 +166,7 @@ Modal-->
                         firstName: $('#user_first_name_textbox').val(),
                         lastName: $('#user_last_name_textbox').val(),
                         password: $('#user_password_textbox').val(),
-                        persimissonsId: $('#user_permission_textbox').val(),
+                        persimissonsId: $('#role_selection').val(),
                         department: $('#user_department_textbox').val(),
                         email: $('#user_email_textbox').val()
                     }

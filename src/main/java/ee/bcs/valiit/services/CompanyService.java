@@ -9,7 +9,7 @@ import java.util.List;
 
 public class CompanyService {
 
-    public static final String SQL_CONNECTION_URL = "jdbc:mysql://localhost:3306/mydb";
+    public static final String SQL_CONNECTION_URL = "jdbc:mysql://localhost:3306/companies";
     public static final String SQL_USERNAME = "root";
     public static final String SQL_PASSWORD = "tere";
 

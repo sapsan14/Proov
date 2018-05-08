@@ -6,34 +6,32 @@
     <title>Feedback</title>
 </head>
 <body>
-<div class="meeting_owner_name">
-    <p>Koosoleku koostaja: <span id="meeting_holder_by_name"></span></p></br>
+<div class="meeting-owner-name">
+    <p>Koosoleku koostaja: <span id="meeting_holder_by_name"></span></p>
 </div>
 <div class="meeting">
-    <span id="meeting_holder_id" type="hidden"/>
-
+    <p>Meeting owner id:  <span id="meeting_holder_id"></span></p>
     <p>Koosoleku sisu:  <span id="meeting_subject"></span></p>
     <p>Koosoleku toimumisaeg: <span id="meeting_time"></span></p>
 </div>
 
 <div class="txt-center">
     <form>
-        <input type="hidden" id="feedbackForm_id_field"/>
         <input type="hidden" id="meeting_id_field"/>
-        <ul class="rate-area">
-            <input type="radio" id="5-star" name="rating" value="5"/><label for="5-star" title="Amazing">5 stars</label>
-            <input type="radio" id="4-star" name="rating" value="4"/><label for="4-star" title="Good">4 stars</label>
-            <input type="radio" id="3-star" name="rating" value="3"/><label for="3-star" title="Average">3 stars</label>
-            <input type="radio" id="2-star" name="rating" value="2"/><label for="2-star" title="Not Good">2 stars</label>
-            <input type="radio" id="1-star" name="rating" value="1"/><label for="1-star" title="Bad">1 star</label>
+        <ul class="rating">
+            <input type="radio" id="str5" name="rating" value="5"/><label for="str5" title="Amazing">5 stars</label>
+            <input type="radio" id="str4" name="rating" value="4"/><label for="str4" title="Good">4 stars</label>
+            <input type="radio" id="str3" name="rating" value="3"/><label for="str3" title="Average">3 stars</label>
+            <input type="radio" id="str2" name="rating" value="2"/><label for="str2" title="Not Good">2 stars</label>
+            <input type="radio" id="str1" name="rating" value="1"/><label for="str1" title="Bad">1 star</label>
         </ul>
     </form>
     <form>
         <div class="form-group">
-            <label class="comments" for="exampleFormControlTextarea1">Kommentaarid</label></br>
-            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+            <label class="comments" for="meeting_comment_textarea">Kommentaarid</label></br>
+            <textarea class="form-control" id="meeting_comment_textarea" rows="3"></textarea>
         </div>
-        <button type="submit" class="btn btn-primary" onclick="submitFeedBack()">Submit</button>
+        <button type="submit" class="btn btn-primary" onclick="submitFeedbackform()">Submit</button>
     </form>
 </div>
 <script src="js/jquery.min.js"></script>
@@ -47,34 +45,20 @@
             // $('#companies_list').append('Hello World');
             getMeetingInfo();
             // getMeetingOwnerName();
-        }
-    );
+            // Check Radio-box
+            $(".rating input:radio").attr("checked", false);
 
-    /*    function submitFeedBack(){
-            $.ajax(
-                {
-                    method: "POST",
-                    url: "/rest/add_feedback",
-                    dataType: "json",
-                    contentType: 'application/json',
-                    data: JSON.stringify(
-                        {
-                            id: $('#user_id_field').val() > 0 ? $('#user_id_field').val() : "0",
-                            firstName: $('#user_first_name_textbox').val(),
-                            lastName: $('#user_last_name_textbox').val(),
-                            password: $('#user_password_textbox').val(),
-                            persimissonsId: $('#user_permission_textbox').val(),
-                            department: $('#user_department_textbox').val(),
-                            email: $('#user_email_textbox').val()
-                        }
-                    ),
-                    complete: function (response) {
-                        giveAllUsers();
-                    }
-                }
-            )
+            $('.rating input').click(function () {
+                $(".rating span").removeClass('checked');
+                $(this).parent().addClass('checked');
+            });
 
-        }*/
+            $('input:radio').change(
+                function(){
+                    var userRating = this.value;
+                    alert(userRating);
+                });
+        });
 
     function getMeetingInfo() {
         $.ajax(
@@ -83,15 +67,40 @@
                 url: "/rest/get_meeting_by_id?meeting_id=" + 1,//meetingId - VAHETA ÄRA!!!!!,
                 dataType: "json",
                 complete: function (response) {
-                    var data = response.responseJSON;
-                    $('#meeting_holder_id').html(data.meetingOwnerId);
-                    $('#meeting_subject').html(data.subject);
-                    $('#meeting_time').html(data.dateTimeForMeeting);
+                    var meeting = response.responseJSON;
+                    $('#meeting_id_field').html(meeting.meetingId);
+                    $('#meeting_holder_id').html(meeting.meetingOwnerId);
+                    $('#meeting_subject').html(meeting.subject);
+                    $('#meeting_time').html(meeting.dateTimeForMeeting);
+                    $('#meeting_holder_by_name').html(meeting.meetingHolder.firstName + ' ' + meeting.meetingHolder.lastName);
                     console.log('Jep, the AJAX method works!')
                 }
 
             }
         );
+    }
+
+    function submitFeedbackform()  {
+        $.ajax(
+            {
+                method: "POST",
+                url: "/rest/submit_feedback",
+                dataType: "json",
+                contentType: 'application/json',
+                data: JSON.stringify(
+                    {
+                        meetingId: 123, //('#meeting_id_field').val(),
+                        comment: 'FUCKING TEST',//$('#meeting_comment_textarea').val(),
+                        feedbackAsNumber: 3, //$('#rating').val(),
+                    }
+                ),
+
+                complete: function (response) {
+                    console.log('Jep, the AJAX method (sumbitFeedbackform) works!');
+                    //giveAllUsers();
+                }
+            }
+        )
     }
 
 /*    function getMeetingOwnerName(){

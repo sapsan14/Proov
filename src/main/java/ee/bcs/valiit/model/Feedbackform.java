@@ -4,8 +4,6 @@ import java.util.Date;
 
 public class Feedbackform {
 
-
-
     private int feedBackFormId;
     private int meetingId;
     private String meetingSubject;

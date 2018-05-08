@@ -17,19 +17,44 @@ public class OmniMeterService {
     public static final String SQL_PASSWORD = "tere";
 
 
+    public static ResultSet executeSql(String sql) {
+        try {
+            Class.forName("org.mariadb.jdbc.Driver");
+            try (Connection conn = DriverManager.getConnection(SQL_CONNECTION_URL, SQL_USERNAME, SQL_PASSWORD)) {
+                try (Statement stmt = conn.createStatement()) {
+                    return stmt.executeQuery(sql);
+                }
+            }
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
     public static void addUser(User user) {
         //salvestame ettevõtte andmebaasi
-        if (userDoesntExsist(user.getEmail())) {
-            String sql = "INSERT INTO user (first_name, last_name, password, role, department, email)" +
-                    " VALUES ('" + user.getFirstName() + "' , '" + user.getLastName() + "' , '" + user.getPassword() + "' , " + user.getPersimissonsId() + " , '" + user.getDepartment() + "' , '" + user.getEmail() + "')";
+        if (userDoesntExist(user.getEmail())) {
+            String sql = "INSERT INTO user (first_name, last_name, password, role_id, department, email)" +
+                    " VALUES ('" + user.getFirstName() + "' , '" + user.getLastName() + "' , '" + user.getPassword() + "' , '" + user.getPersimissonsId() + "' , '" + user.getDepartment() + "' , '" + user.getEmail() + "')";
+            executeSql(sql);
+
+        }
+    }
+
+    public static void addMeeting(Meeting meeting) {
+        //salvestame koosoleku andmebaasi
+        if (meetingDoesntExist(meeting.getUniqueHash())) {
+            String sql = "INSERT INTO meeting (uuid, subject, details, date, time, type, meeting_owner_id)" +
+                    " VALUES ('" + meeting.getUniqueHash() + "' , '" + meeting.getSubject() + "' , '" + meeting.getDetails() + "' , '" + meeting.getDate() + "'    , '" + meeting.getTime() + "' , " + meeting.getType() + " , " + meeting.getOwnerId() + ")";
             executeSql(sql);
 
         }
     }
 
     public static void addFeedBack(Feedbackform feedback) {
-        //salvestame ettevõtte andmebaasi
-//        if (userDoesntExsist(user.getEmail())) {
+        //salvestame vormi andmebaasi
+//        if (userDoesntExist(user.getEmail())) {
         String sql = "INSERT INTO feedback (id, feedback_points, feedback_comments, meeting_id, )" +
                 " VALUES ('" + feedback.getFeedBackFormId() + "' , '" + feedback.getFeedBackAsNumber() + "' , '" + feedback.getComment() + "' , " + feedback.getMeetingId() + "')";
         executeSql(sql);
@@ -39,11 +64,16 @@ public class OmniMeterService {
 
 
     public static void modifyUser(User user) {
-        String sql = String.format("UPDATE user SET first_name = '%s', last_name = '%s', password = '%s', role = %s, department = '%s', email = '%s' WHERE id = %s",
+        String sql = String.format("UPDATE user SET first_name = '%s', last_name = '%s', password = '%s', role_id = '%s', department = '%s', email = '%s' WHERE id = %s",
                 user.getFirstName(), user.getLastName(), user.getPassword(), user.getPersimissonsId(), user.getDepartment(), user.getEmail(), user.getId());
         executeSql(sql);
     }
 
+    public static void modifyMeeting(Meeting meeting) {
+        String sql = String.format("UPDATE meeting SET uuid = '%s', subject = '%s', details = '%s', date = %s, time = '%s', type = '%s', meeting_owner_id = '%s' WHERE uuid = %s",
+                meeting.getUniqueHash(), meeting.getSubject(), meeting.getDetails(), meeting.getDate(), meeting.getTime(), meeting.getType(), meeting.getOwnerId());
+        executeSql(sql);
+    }
 
     public static List<User> getUsers() {
         List<User> users = new ArrayList<User>();
@@ -61,21 +91,42 @@ public class OmniMeterService {
         return users;
     }
 
-    public static boolean userDoesntExsist(String email) {
+    public static List<Meeting> getMeetings(int meetingOwnerId) {
+        List<Meeting> meetings = new ArrayList<Meeting>();
+        try {
+            ResultSet result = executeSql("select * from meeting where meeting_owner_id =" + meetingOwnerId);
+            if (result != null) {
+                while (result.next()) {
+                    meetings.add(new Meeting(result));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return meetings;
+    }
+
+
+    public static boolean userDoesntExist(String email) {
         return getUserByEmail(email) == null;
+    }
+
+    public static boolean meetingDoesntExist(String uuid) {
+        return getMeetingByUuid(uuid) == null;
     }
 
 
     public static User getUserByEmail(String email) {
         try {
-            ResultSet result = executeSql("select id, first_name, last_name, password, role, department, email from user where email = '" + email + "'");
+            ResultSet result = executeSql("select id, first_name, last_name, password, role_id, department, email from user where email = '" + email + "'");
             if (result != null) {
                 if (result.next()) {
                     User user = new User();
                     user.setId(result.getInt("id"));
                     user.setFirstName(result.getString("first_name"));
                     user.setLastName(result.getString("last_name"));
-                    user.setPersimissonsId(result.getInt("role"));
+                    user.setPersimissonsId(result.getString("role_id"));
                     user.setPassword(result.getString("password"));
                     user.setDepartment(result.getString("department"));
                     user.setEmail(result.getString("email"));
@@ -89,19 +140,27 @@ public class OmniMeterService {
         return null;
     }
 
-
-    public static ResultSet executeSql(String sql) {
+    public static Meeting getMeetingByUuid(String uuid) {
         try {
-            Class.forName("org.mariadb.jdbc.Driver");
-            try (Connection conn = DriverManager.getConnection(SQL_CONNECTION_URL, SQL_USERNAME, SQL_PASSWORD)) {
-                try (Statement stmt = conn.createStatement()) {
-                    return stmt.executeQuery(sql);
+            ResultSet result = executeSql("select uuid from meeting where uuid = '" + uuid + "'");
+            if (result != null) {
+                if (result.next()) {
+                    Meeting meeting = new Meeting();
+                    meeting.setUniqueHash(result.getString("uuid"));
+                    meeting.setSubject(result.getString("subject"));
+                    meeting.setDetails(result.getString("details"));
+                    meeting.setDate(result.getString("date"));
+                    meeting.setTime(result.getString("time"));
+                    meeting.setType(result.getInt("type"));
+                    meeting.setOwnerId(result.getInt("meeting_owner_id"));
+
+                    return meeting;
                 }
             }
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
-            return null;
         }
+        return null;
     }
 
     public static Meeting getMeetingById(int meetingId) {
@@ -112,11 +171,15 @@ public class OmniMeterService {
                 if (result.next()) {
                     Meeting meeting = new Meeting();
                     meeting.setMeetingId(result.getInt("id"));
-                    meeting.setMeetingOwnerId(result.getInt("meeting_owner_id"));
-                    meeting.setMeetingTypeId(result.getInt("meeting_type_id"));
-                    meeting.setDateTimeForMeeting(result.getString("datetime"));
-                    meeting.setDetailsOfMeeting(result.getString("details_of_meeting"));
+                    meeting.setOwnerId(result.getInt("meeting_owner_id"));
+                    meeting.setType(result.getInt("type"));
+                    meeting.setUniqueHash(result.getString("uuid"));
+                    meeting.setDate(result.getString("date"));
+                    meeting.setTime(result.getString("time"));
+                    meeting.setDetails(result.getString("details"));
                     meeting.setSubject(result.getString("subject"));
+                    //meeting.setMeetingHolder(getUser(meeting.getMeetingOwnerId()));
+
                     return meeting;
                 }
             }
@@ -137,7 +200,7 @@ public class OmniMeterService {
                     user.setId(result.getInt("id"));
                     user.setFirstName(result.getString("first_name"));
                     user.setLastName(result.getString("last_name"));
-                    user.setPersimissonsId(result.getInt("role"));
+                    user.setPersimissonsId(result.getString("role_id"));
                     user.setPassword(result.getString("password"));
                     user.setDepartment(result.getString("department"));
                     user.setEmail(result.getString("email"));
@@ -157,4 +220,13 @@ public class OmniMeterService {
     }
 
 
+    public static void submitFeedbackform(Feedbackform feedbackform) {
+
+//        if (feedbackformDoesntExsist(feedbackform.getFeedbackform())) {
+            String sql = "INSERT INTO feedback_form (meeting_id, feedback_points, feedback_comments)" +
+                    " VALUES ('" + feedbackform.getMeetingId() + "', '" + feedbackform.getFeedBackAsNumber() + " , '" + feedbackform.getComment() + "')";
+            executeSql(sql);
+
+//        }
+    }
 }
