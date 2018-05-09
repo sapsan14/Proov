@@ -4,10 +4,12 @@ import java.util.Date;
 
 public class Feedbackform {
 
+
     private int feedBackFormId;
-    private int meetingId;
+    private String meetingUuid;
     private String meetingSubject;
-    private Date meetingDateTime;
+    private String meetingDate;
+    private String meetingTime;
     private String meetingOrganizer;
     private int feedBackAsNumber;
     private String comment;
@@ -24,23 +26,24 @@ public class Feedbackform {
         this.feedBackFormId = feedBackFormId;
     }
 
-    public Feedbackform(int feedBackFormId, int meetingId, String meetingSubject, Date meetingDateTime, String meetingOrganizer, int feedBackAsNumber, String comment) {
+    public Feedbackform(int feedBackFormId, String meetingUuid, String meetingSubject, String meetingDate,String meetingTime, String meetingOrganizer, int feedBackAsNumber, String comment) {
         this.feedBackFormId = getFeedBackFormId();
-        this.meetingId = meetingId;
+        this.meetingUuid = meetingUuid;
         this.meetingSubject = meetingSubject;
-        this.meetingDateTime = meetingDateTime;
+        this.meetingDate = meetingDate;
+        this.meetingTime = meetingTime;
         this.meetingOrganizer = meetingOrganizer;
         this.feedBackAsNumber = feedBackAsNumber;
         this.comment = comment;
     }
 
 
-    public int getMeetingId() {
-        return meetingId;
+    public String getMeetingUuid() {
+        return meetingUuid;
     }
 
-    public void setMeetingId(int meetingId) {
-        this.meetingId = meetingId;
+    public void setMeetingUuId(String meetingUuid) {
+        this.meetingUuid = meetingUuid;
     }
 
     public String getMeetingSubject() {
@@ -51,12 +54,24 @@ public class Feedbackform {
         this.meetingSubject = meetingSubject;
     }
 
-    public Date getMeetingDateTime() {
-        return meetingDateTime;
+    public String getMeetingDate() {
+        return meetingDate;
     }
 
-    public void setMeetingDateTime(Date meetingDateTime) {
-        this.meetingDateTime = meetingDateTime;
+    public void setMeetingUuid(String meetingUuid) {
+        this.meetingUuid = meetingUuid;
+    }
+
+    public String getMeetingTime() {
+        return meetingTime;
+    }
+
+    public void setMeetingTime(String meetingTime) {
+        this.meetingTime = meetingTime;
+    }
+
+    public void setMeetingDate(String meetingDate) {
+        this.meetingDate = meetingDate;
     }
 
     public String getMeetingOrganizer() {
@@ -82,15 +97,5 @@ public class Feedbackform {
     public void setComment(String comment) {
         this.comment = comment;
     }
-
-    public static int addNumber(String str1, String str2) {
-        int a = Integer.parseInt(str1);
-        int b = Integer.parseInt(str2);
-
-        int sum = a + b;
-        return sum;
-    }
-
-
 
 }

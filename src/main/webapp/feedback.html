@@ -10,20 +10,23 @@
     <p>Koosoleku koostaja: <span id="meeting_holder_by_name"></span></p>
 </div>
 <div class="meeting">
-    <p>Meeting owner id:  <span id="meeting_holder_id"></span></p>
+    <p>Meeting uuid:  <span id="meeting_uuid_field"></span></p>
+    <p>Meeting owner id:  <span id="meeting_holder_id_show"></span></p>
     <p>Koosoleku sisu:  <span id="meeting_subject"></span></p>
-    <p>Koosoleku toimumisaeg: <span id="meeting_time"></span></p>
+    <p>Koosoleku toimumisaeg: <span id="meeting_date_show"></span></p>
+    <p>Koosoleku details: <span id="meeting_details"></span></p>
 </div>
 
 <div class="txt-center">
     <form>
-        <input type="hidden" id="meeting_id_field"/>
         <ul class="rating">
             <input type="radio" id="str5" name="rating" value="5"/><label for="str5" title="Amazing">5 stars</label>
             <input type="radio" id="str4" name="rating" value="4"/><label for="str4" title="Good">4 stars</label>
             <input type="radio" id="str3" name="rating" value="3"/><label for="str3" title="Average">3 stars</label>
             <input type="radio" id="str2" name="rating" value="2"/><label for="str2" title="Not Good">2 stars</label>
             <input type="radio" id="str1" name="rating" value="1"/><label for="str1" title="Bad">1 star</label>
+            <input type="hidden" id="meeting_rating_field"/>
+
         </ul>
     </form>
     <form>
@@ -31,15 +34,21 @@
             <label class="comments" for="meeting_comment_textarea">Kommentaarid</label></br>
             <textarea class="form-control" id="meeting_comment_textarea" rows="3"></textarea>
         </div>
-        <button type="submit" class="btn btn-primary" onclick="submitFeedbackform()">Submit</button>
+        <button type="button" class="btn btn-primary" onclick="submitFeedbackform()">Submit</button>
     </form>
 </div>
 <script src="js/jquery.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <script src="js/jquery-ui.js"></script>
 <script>
+
+    var meetingUUID = ""; // global variable
+
     $(document).ready(
         function () {
+
+            meetingUUID = getParam("uuid");
+
             // initUiControls();
             // Käivitame selle koodi siis, kui HTML dokument lõplikult laetud.
             // $('#companies_list').append('Hello World');
@@ -56,7 +65,7 @@
             $('input:radio').change(
                 function(){
                     var userRating = this.value;
-                    alert(userRating);
+                    $('#meeting_rating_field').val(userRating);
                 });
         });
 
@@ -64,16 +73,19 @@
         $.ajax(
             {
                 method: "GET",
-                url: "/rest/get_meeting_by_id?meeting_id=" + 1,//meetingId - VAHETA ÄRA!!!!!,
+                url: "/rest/get_meeting_by_uuid?meeting_uuid=" + meetingUUID,//meetingId - VAHETA ÄRA!!!!!,
                 dataType: "json",
                 complete: function (response) {
                     var meeting = response.responseJSON;
-                    $('#meeting_id_field').html(meeting.meetingId);
-                    $('#meeting_holder_id').html(meeting.meetingOwnerId);
+                    $('#meeting_uuid_field').html(meeting.uniqueHash);
+                    $('#meeting_holder_id_show').html(meeting.ownerId);
                     $('#meeting_subject').html(meeting.subject);
-                    $('#meeting_time').html(meeting.dateTimeForMeeting);
+                    $('#meeting_date_show').html(meeting.date);
+                    $('#meeting_time').html(meeting.time);
+                    $('#meeting_type').html(meeting.type);
+                    $('#meeting_details').html(meeting.details);
                     $('#meeting_holder_by_name').html(meeting.meetingHolder.firstName + ' ' + meeting.meetingHolder.lastName);
-                    console.log('Jep, the AJAX method works!')
+                    console.log('Jep, meeting by uuid works!')
                 }
 
             }
@@ -84,14 +96,14 @@
         $.ajax(
             {
                 method: "POST",
-                url: "/rest/submit_feedback",
+                url: "/rest/add_feedback",
                 dataType: "json",
                 contentType: 'application/json',
                 data: JSON.stringify(
                     {
-                        meetingId: 123, //('#meeting_id_field').val(),
-                        comment: 'FUCKING TEST',//$('#meeting_comment_textarea').val(),
-                        feedbackAsNumber: 3, //$('#rating').val(),
+                        meetingUuid: meetingUUID,
+                        comment: $('#meeting_comment_textarea').val(),
+                        feedbackAsNumber: $('#meeting_rating_field').val()
                     }
                 ),
 
@@ -101,6 +113,10 @@
                 }
             }
         )
+    }
+
+    function getParam(param){
+        return new URLSearchParams(window.location.search).get(param);
     }
 
 /*    function getMeetingOwnerName(){

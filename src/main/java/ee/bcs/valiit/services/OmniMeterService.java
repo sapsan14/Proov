@@ -2,6 +2,7 @@ package ee.bcs.valiit.services;
 
 import ee.bcs.valiit.model.Feedbackform;
 import ee.bcs.valiit.model.Meeting;
+import ee.bcs.valiit.model.MeetingType;
 import ee.bcs.valiit.model.User;
 
 import java.sql.ResultSet;
@@ -46,7 +47,7 @@ public class OmniMeterService {
         //salvestame koosoleku andmebaasi
         if (meetingDoesntExist(meeting.getUniqueHash())) {
             String sql = "INSERT INTO meeting (uuid, subject, details, date, time, type, meeting_owner_id)" +
-                    " VALUES ('" + meeting.getUniqueHash() + "' , '" + meeting.getSubject() + "' , '" + meeting.getDetails() + "' , '" + meeting.getDate() + "'    , '" + meeting.getTime() + "' , " + meeting.getType() + " , " + meeting.getOwnerId() + ")";
+                    " VALUES ('" + meeting.getUniqueHash() + "' , '" + meeting.getSubject() + "' , '" + meeting.getDetails() + "' , '" + meeting.getDate() + "'    , '" + meeting.getTime() + "' , '" + meeting.getType() + "' , " + meeting.getOwnerId() + ")";
             executeSql(sql);
 
         }
@@ -55,8 +56,8 @@ public class OmniMeterService {
     public static void addFeedBack(Feedbackform feedback) {
         //salvestame vormi andmebaasi
 //        if (userDoesntExist(user.getEmail())) {
-        String sql = "INSERT INTO feedback (id, feedback_points, feedback_comments, meeting_id, )" +
-                " VALUES ('" + feedback.getFeedBackFormId() + "' , '" + feedback.getFeedBackAsNumber() + "' , '" + feedback.getComment() + "' , " + feedback.getMeetingId() + "')";
+        String sql = "INSERT INTO feedback_form (feedback_points, feedback_comments, meeting_uuid )" +
+                " VALUES (" + feedback.getFeedBackAsNumber() + " , '" + feedback.getComment() + "' , '" + feedback.getMeetingUuid() + "')";
         executeSql(sql);
 
 //        }
@@ -70,8 +71,8 @@ public class OmniMeterService {
     }
 
     public static void modifyMeeting(Meeting meeting) {
-        String sql = String.format("UPDATE meeting SET uuid = '%s', subject = '%s', details = '%s', date = %s, time = '%s', type = '%s', meeting_owner_id = '%s' WHERE uuid = %s",
-                meeting.getUniqueHash(), meeting.getSubject(), meeting.getDetails(), meeting.getDate(), meeting.getTime(), meeting.getType(), meeting.getOwnerId());
+        String sql = String.format("UPDATE meeting SET uuid = '%s', subject = '%s', details = '%s', date = '%s', time = '%s', type = '%s', meeting_owner_id = '%s' WHERE uuid = '%s'",
+                meeting.getUniqueHash(), meeting.getSubject(), meeting.getDetails(), meeting.getDate(), meeting.getTime(), meeting.getType(), meeting.getOwnerId(), meeting.getUniqueHash());
         executeSql(sql);
     }
 
@@ -142,7 +143,7 @@ public class OmniMeterService {
 
     public static Meeting getMeetingByUuid(String uuid) {
         try {
-            ResultSet result = executeSql("select uuid from meeting where uuid = '" + uuid + "'");
+            ResultSet result = executeSql("select * from meeting where uuid ='" + uuid + "'");
             if (result != null) {
                 if (result.next()) {
                     Meeting meeting = new Meeting();
@@ -151,8 +152,9 @@ public class OmniMeterService {
                     meeting.setDetails(result.getString("details"));
                     meeting.setDate(result.getString("date"));
                     meeting.setTime(result.getString("time"));
-                    meeting.setType(result.getInt("type"));
+                    meeting.setType(result.getString("type"));
                     meeting.setOwnerId(result.getInt("meeting_owner_id"));
+                    meeting.setMeetingHolder(getUser(meeting.getOwnerId()));
 
                     return meeting;
                 }
@@ -163,32 +165,32 @@ public class OmniMeterService {
         return null;
     }
 
-    public static Meeting getMeetingById(int meetingId) {
-        try {
-            String sql = "Select * from meeting where id =" + meetingId;
-            ResultSet result = executeSql(sql);
-            if (result != null) {
-                if (result.next()) {
-                    Meeting meeting = new Meeting();
-                    meeting.setMeetingId(result.getInt("id"));
-                    meeting.setOwnerId(result.getInt("meeting_owner_id"));
-                    meeting.setType(result.getInt("type"));
-                    meeting.setUniqueHash(result.getString("uuid"));
-                    meeting.setDate(result.getString("date"));
-                    meeting.setTime(result.getString("time"));
-                    meeting.setDetails(result.getString("details"));
-                    meeting.setSubject(result.getString("subject"));
-                    //meeting.setMeetingHolder(getUser(meeting.getMeetingOwnerId()));
-
-                    return meeting;
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
+//    public static Meeting getMeetingById(int meetingId) {
+//        try {
+//            String sql = "Select * from meeting where id =" + meetingId;
+//            ResultSet result = executeSql(sql);
+//            if (result != null) {
+//                if (result.next()) {
+//                    Meeting meeting = new Meeting();
+//                    meeting.setMeetingId(result.getInt("id"));
+//                    meeting.setOwnerId(result.getInt("meeting_owner_id"));
+//                    meeting.setType(result.getString("type"));
+//                    meeting.setUniqueHash(result.getString("uuid"));
+//                    meeting.setDate(result.getString("date"));
+//                    meeting.setTime(result.getString("time"));
+//                    meeting.setDetails(result.getString("details"));
+//                    meeting.setSubject(result.getString("subject"));
+//                    meeting.setMeetingHolder(getUser(meeting.getOwnerId()));
+//
+//                    return meeting;
+//                }
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return null;
+//    }
 
     public static User getUser(int userId) {
         try {
@@ -220,13 +222,26 @@ public class OmniMeterService {
     }
 
 
-    public static void submitFeedbackform(Feedbackform feedbackform) {
-
-//        if (feedbackformDoesntExsist(feedbackform.getFeedbackform())) {
-            String sql = "INSERT INTO feedback_form (meeting_id, feedback_points, feedback_comments)" +
-                    " VALUES ('" + feedbackform.getMeetingId() + "', '" + feedbackform.getFeedBackAsNumber() + " , '" + feedbackform.getComment() + "')";
-            executeSql(sql);
-
-//        }
+    public static void deleteMeeting(String uuid) {
+        String sql = "DELETE FROM meeting where uuid = " + "'" + uuid + "'";
+        executeSql(sql);
     }
+
+    public static List<MeetingType> getMeetingTypes() {
+        List<MeetingType> meetingTypes = new ArrayList<>();
+        try {
+            ResultSet result = executeSql("select * from meeting_type ");
+            if (result != null) {
+                while (result.next()) {
+                    meetingTypes.add(new MeetingType(result));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return meetingTypes;
+    }
+
 }
+

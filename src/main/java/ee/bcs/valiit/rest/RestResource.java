@@ -98,6 +98,15 @@ public class RestResource {
         return OmniMeterService.getUsers();
     }
 
+    @GET
+    @Path("/get_meeting_types")
+    @Produces(MediaType.APPLICATION_JSON) // anname välja formaadis APPLICATION_JSON
+    public List<MeetingType> getMeetingTypes() {
+        return OmniMeterService.getMeetingTypes();
+    }
+
+
+
     @POST
     @Path("/add_user")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -117,21 +126,20 @@ public class RestResource {
     }
 
 
-    @POST
-    @Path("/add_feedback")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.TEXT_PLAIN)
-    public String addFeedback(Feedbackform feedback) {
-        OmniMeterService.submitFeedbackform(feedback);
-        return "OK";
-    }
+//    @GET
+//    @Path("/get_meeting_by_id")
+//    @Produces(MediaType.APPLICATION_JSON) // anname välja formaadis APPLICATION_JSON
+//    public Meeting getMeeting(@QueryParam("meeting_id") int meeting_id){
+//        return OmniMeterService.getMeetingById(meeting_id);
+   // }
 
     @GET
-    @Path("/get_meeting_by_id")
+    @Path("/get_meeting_by_uuid")
     @Produces(MediaType.APPLICATION_JSON) // anname välja formaadis APPLICATION_JSON
-    public Meeting getMeeting(@QueryParam("meeting_id") int meeting_id){
-        return OmniMeterService.getMeetingById(meeting_id);
+    public Meeting getMeeting(@QueryParam("meeting_uuid") String meeting_uuid){
+        return OmniMeterService.getMeetingByUuid(meeting_uuid);
     }
+
 
 
     @POST
@@ -155,7 +163,7 @@ public class RestResource {
     @GET
     @Path("/get_user")
     @Produces(MediaType.APPLICATION_JSON)
-    public User getUser(@QueryParam("user_id") int userId){
+    public User getUser(@QueryParam("id") int userId){
         return OmniMeterService.getUser(userId);
     }
 
@@ -164,6 +172,14 @@ public class RestResource {
     @Produces(MediaType.TEXT_PLAIN)
     public String deleteUser(@FormParam("user_id") int userId){
         OmniMeterService.deleteUser(userId);
+        return "OK";
+    }
+
+    @POST
+    @Path("/delete_meeting")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String deleteMeeting(@FormParam("uuid") String uuid){
+        OmniMeterService.deleteMeeting(uuid);
         return "OK";
     }
 
@@ -203,24 +219,17 @@ public class RestResource {
         return "OK";
     }
 
-    @GET
-    @Path("/give_feedback")
-    @Produces(MediaType.TEXT_PLAIN)
-    public int feedBackByNumber(@DefaultValue("") @QueryParam("feedBack") String feedBack) {
-        int a = Integer.parseInt(feedBack);
-        return a;
-    }
-
     @POST
-    @Path("/submit_feedback")
+    @Path("/add_feedback")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
-    public String submitFeedbackform(Feedbackform feedbackform){
-        OmniMeterService.submitFeedbackform(feedbackform);
+    public String addFeedback(Feedbackform feedback) {
+        OmniMeterService.addFeedBack(feedback);
         return "OK";
     }
 
 
-    @GET
+        @GET
     @Path("/get_meetings")
     @Produces(MediaType.APPLICATION_JSON) // anname välja formaadis APPLICATION_JSON
     public List<Meeting> getMeetings(@Context HttpServletRequest req, @QueryParam("meeting_owner_id") int meetingOwnerId) {
@@ -311,6 +320,13 @@ public class RestResource {
             return user.getPersimissonsId().equals(expectedRole);
         }
         return false;
+    }
+
+    @GET
+    @Path("/register_visit")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String registerVisit () {
+        return VisitCounter.addVisit();
     }
 
 }

@@ -10,6 +10,11 @@
 <div class="container">
     <h1>Baltic companies</h1>
 
+    <div class="row justify-content-center": 250px>
+        <div style="color: grey; border: 1px solid grey; border-radius: 3px; border-padding: 5px"></div>
+        Visit count: <span id="visitCount">0</span>
+    </div>
+
     <table class="table">
         <thead>
         <tr>
@@ -73,6 +78,7 @@
             // Käivitame selle koodi siis, kui HTML dokument lõplikult laetud.
             // $('#companies_list').append('Hello World');
             giveMeAllTheCompanies();
+            getVisitCount();
         }
     );
 
@@ -194,9 +200,19 @@
 
             }
         );
-
-
     }
+
+        function getVisitCount() {
+            $.ajax(
+                {
+                    url: "/vali-it-webapp/rest/register_visit",
+                    method: "GET",
+                    complete: function (result) {
+                        $('visitCount').html (result.responseText);
+                    }
+                }
+            );
+        }
 
 
     function prepareMyCompanyAdd(companyId) {

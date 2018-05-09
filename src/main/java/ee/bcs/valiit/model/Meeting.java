@@ -10,7 +10,7 @@ public class Meeting {
     private int meetingOwnerId = 2;
     private String subject;
     private String uniqueHash = UUID.randomUUID().toString();
-    private int type;
+    private String type;
     private String date;
     private String time;
     private String details;
@@ -33,12 +33,13 @@ public class Meeting {
         try {
             this.setMeetingId(result.getInt("id"));
             this.setOwnerId(result.getInt("meeting_owner_id"));
-            this.setType(result.getInt("type"));
+            this.setType(result.getString("type"));
             this.setDate(result.getString("date"));
             this.setTime(result.getString("time"));
             this.setSubject(result.getString("subject"));
             this.setDetails(result.getString("details"));
             this.setUniqueHash(result.getString("uuid"));
+
             } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -52,14 +53,15 @@ public class Meeting {
         this.uniqueHash = uniqueHash;
     }
 
-    public Meeting(int id, int meetingOwnerId, int type, String subject, String date, String time, String details ) {
+    public Meeting(int id, int meetingOwnerId, String type, String subject, String date, String time, String details, User meetingHolder ) {
         this.id = id;
         this.meetingOwnerId = meetingOwnerId;
         this.type = type;
         this.subject = subject;
         this.details = details;
         this.date = date;
-        this.date = time;
+        this.time = time;
+        this.meetingHolder = meetingHolder;
     }
     public int getMeetingId() {
         return id;
@@ -77,9 +79,9 @@ public class Meeting {
         this.subject = subject;
     }
 
-    public void setType (int type) {this.type = type;    }
+    public void setType (String type) {this.type = type;    }
 
-    public int getType() { return type;  }
+    public String getType() { return type;  }
 
     public String getDetails() { return details;  }
 
