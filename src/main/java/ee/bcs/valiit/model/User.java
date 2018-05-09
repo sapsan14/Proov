@@ -2,6 +2,7 @@ package ee.bcs.valiit.model;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.UUID;
 
 public class User {
     private int id;
@@ -12,6 +13,17 @@ public class User {
     private String password;
     private String email;
     private String role;
+    private String userUuid = UUID.randomUUID().toString();
+
+
+    public String getUserUuid() {
+        return userUuid;
+    }
+
+    public void setUserUuid(String userUuid) {
+        this.userUuid = userUuid;
+    }
+
 
     public User() {
 
@@ -26,12 +38,13 @@ public class User {
             this.setPersimissonsId(result.getString("role_id"));
             this.setDepartment(result.getString("department"));
             this.setEmail(result.getString("email"));
+            this.setUserUuid(result.getString("uuid"));
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public User(int id, String firstName, String lastName, String password, String persimissonsId, String department, String email) {
+    public User(int id, String firstName, String lastName, String password, String persimissonsId, String department, String email, String userUuid) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -39,6 +52,7 @@ public class User {
         this.persimissonsId = persimissonsId;
         this.department = department;
         this.email = email;
+        this.userUuid = userUuid;
     }
 
     public int getId() {

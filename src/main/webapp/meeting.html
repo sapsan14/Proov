@@ -24,7 +24,6 @@
             <th scope="col">Date</th>
             <th scope="col">Time</th>
             <th scope="col">Type</th>
-            <!--<th scope="col"><p>Link: ..../rest/feedbackform?uuid=' + $('#meeting_uuid_field').val() + '"</p> </th>-->
             <th scope="col"></th>
             <th scope="col"></th>
 
@@ -60,7 +59,6 @@ Modal-->
                 <input type="text" id="meeting_details_field" class="form-control" placeholder="details"/><br/>
                 <input type="text" id="meeting_date_field" class="form-control" readonly="readonly" placeholder="date"/><br/>
                 <input type="text" id="meeting_time_field" class="form-control" placeholder="time"/><br/>
-                //..../rest/feedback.h?uuid=<span id="uuid_field_link"></span>
                 <div class="form-group">
                     <label class="font-normal">
                     Hour
@@ -68,15 +66,7 @@ Modal-->
                     <div class="input-group">
                         <select id="hour_selection" data-placeholder=" Select hour..."
                                 class="form-control chosen-select" style="width:350px;" tabindex="2">
-                            <option value="type1">
-                                1
-                            </option>
-                            <option value="type2">
-                                2
-                            </option>
-                            <option value="type3">
-                                3
-                            </option>
+
                         </select>
                     </div>
                     <label class="font-normal">
@@ -86,14 +76,19 @@ Modal-->
                         <select id="minute_selection" data-placeholder=" Select minute..."
                                 class="form-control chosen-select" style="width:350px;" tabindex="2">
                             <option value="type1">
-                                1
+                               00
                             </option>
                             <option value="type2">
-                                2
+                                15
                             </option>
                             <option value="type3">
-                                3
+                                30
                             </option>
+                            <option value="type4">
+                                45
+                            </option>
+
+
                         </select>
                     </div>
                 </div>
@@ -127,8 +122,15 @@ Modal-->
 <script src="js/jquery-ui.js"></script>
 
 <script>
+    var userId = 0;
+    var authenticatedUser = 0;
+
+
+
+
     $(document).ready(
         function () {
+            getAuthenticatedUser();
             initUiControls();
             // Käivitame selle koodi siis, kui HTML dokument lõplikult laetud.
             // $('#companies_list').append('Hello World');
@@ -144,7 +146,7 @@ Modal-->
         $.ajax(
             {
                 method: "GET",
-                url: "/rest/get_meetings?meeting_owner_id=2",
+                url: "/rest/get_meetings?meeting_owner_id=" + userId,
                 dataType: "json",
 
                 complete: function (response) {
@@ -155,7 +157,7 @@ Modal-->
 
 
                         var meetingRow = "<tr>";
-                        meetingRow = meetingRow + "<td><a href=../feedback.html?uuid=" + meetings[i].uniqueHash +">" + meetings[i].uniqueHash + "</a></td>";
+                        meetingRow = meetingRow + "<td><a href=../feedback.html?uuid=" + meetings[i].uniqueHash + ">" + "feedback.html?uuid=" + meetings[i].uniqueHash + "</a></td>";
                         meetingRow = meetingRow + "<td>" + meetings[i].subject + "</td>";
                         meetingRow = meetingRow + "<td>" + meetings[i].details + "</td>";
                         meetingRow = meetingRow + "<td>" + meetings[i].date + "</td>";
@@ -196,7 +198,7 @@ Modal-->
 
         if ($('#meeting_uuid_field').val() != "") {
             jsonObject = {
-                meetingOwnerId: 2,// $('').val()tee ümber, et ei oleks alati 2.
+                meetingOwnerId: userId,// $('').val()tee ümber, et ei oleks alati 2.
                 uniqueHash: $('#meeting_uuid_field').val(),
                 subject: $('#meeting_subject_field').val(),
                 details: $('#meeting_details_field').val(),
@@ -206,7 +208,7 @@ Modal-->
             };
         } else {
             jsonObject = {
-                meetingOwnerId: 2,// $('').val()tee ümber, et ei oleks alati 2.
+                meetingOwnerId: userId,// $('').val()tee ümber, et ei oleks alati 2.
                 subject: $('#meeting_subject_field').val(),
                 details: $('#meeting_details_field').val(),
                 date: $('#meeting_date_field').val(),
@@ -290,10 +292,19 @@ Modal-->
                     console.log(response.responseJSON);
                     var meetingTypes = response.responseJSON;
                     $('#type_selection').empty();
-                    for(var i = 0; i < meetingTypes.length; i++) {
+                    for (var i = 0; i < meetingTypes.length; i++) {
                         $('#type_selection').append('<option value="' + meetingTypes[i].type + '">' + meetingTypes[i].type + '</option>');
                     }
 
+                }
+            }
+        );
+
+        $.ajax({
+                complete: function addHours() {
+                    for (var i = 1; i < 24; i++) {
+                        $('#hour_selection').append('<option value="' + i  + '">' + i  + '</option>');
+                    }
                 }
             }
         );
@@ -313,20 +324,36 @@ Modal-->
     }
 
 
-
-
     function getVisitCount() {
         $.ajax(
             {
                 url: "/rest/register_visit",
                 method: "GET",
                 complete: function (result) {
-                    $('#visitCount').html (result.responseText);
+                    $('#visitCount').html(result.responseText);
 
                 }
             }
         );
     }
+
+
+    function getAuthenticatedUser() {
+        $.ajax(
+            {
+                url: "/rest/get_authenticated_user",
+                method: "GET",
+                complete: function (result) {
+                    authenticatedUser = result.responseJSON;
+                    userId = authenticatedUser.id;
+
+                }
+            }
+        );
+    }
+
+
+
 
 
 </script>
