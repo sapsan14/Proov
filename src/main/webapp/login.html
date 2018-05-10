@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="stylesheet" href="style/bootstrap.min.css"/>
+    <link rel="stylesheet" href="style/jquery-ui.css"/>
+
+
+</head>
+<body>
+
+<div class="container" style="padding-top: 150px" ;>
+    <div class="row justify-content-center" id="errorBox" style="display: none;">
+        <div class=col-sm-4 style="color: red; font-weight: bold">
+            Logimine ebaõnneusts, proovi uuesti
+        </div>
+    </div>
+
+    <div class="row justify-content-center" id="loginBox" style="display: none">
+        <div class="col-sm-4">
+            <input type="text" id="email" class="form-control" placeholder="Email">
+            <input type="password" id="password" class="form-control" placeholder="Password">
+            <button class="btn" onclick="logInUser();">Log In</button>
+        </div>
+    </div>
+    <div class="row justify-content-center" id="logoutBox" style="display: none">
+        <div class="col-sm-4">
+            Oled sisse loginud.<br>
+            <button class = "btn" onclick="logOutUser();">Logout</button>
+        </div>
+        <div class="col-sm-4">
+
+
+        </div>
+    </div>
+
+
+
+</div>
+</body>
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/jquery-ui.js"></script>
+<script src="js/auth.js"></script>
+
+<script>
+
+    $(document).ready(
+        function () {
+            getAuthenticatedUser();
+        }
+    );
+
+
+
+
+</script>
+</html>

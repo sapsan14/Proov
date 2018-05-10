@@ -7,6 +7,34 @@
     <link rel="stylesheet" href="style/jquery-ui.css"/>
 </head>
 <body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#"><span id="user_first_last_name"></span></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="#">    <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/meeting.html">Meetings</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="users_box" style="display: none;" href="/users.html">Users</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="all_meetings_box" style="display: none;" href="/allmeetings.html">All Meetings</a>
+            </li>
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit" onclick="logOutUser()">Logout</button>
+        </form>
+    </div>
+</nav>
+
+
 <div class="container">
     <h1>List of all meetings</h1>
 
@@ -18,7 +46,7 @@
     <table class="table">
         <thead>
         <tr>
-            <th scope="col">UUID</th>
+            <th scope="col">Meeting feedback Link</th>
             <th scope="col">Subject</th>
             <th scope="col">Details</th>
             <th scope="col">Date</th>
@@ -47,7 +75,7 @@ Modal-->
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addMeeting">Add meeting</h5>
+                <h5 class="modal-title" id="addMeeting">Meeting info</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -58,60 +86,63 @@ Modal-->
                 <input type="text" id="meeting_subject_field" class="form-control" placeholder="subject"/><br/>
                 <input type="text" id="meeting_details_field" class="form-control" placeholder="details"/><br/>
                 <input type="text" id="meeting_date_field" class="form-control" readonly="readonly" placeholder="date"/><br/>
-                <input type="text" id="meeting_time_field" class="form-control" placeholder="time"/><br/>
-                <div class="form-group">
-                    <label class="font-normal">
-                    Hour
-                </label>
-                    <div class="input-group">
-                        <select id="hour_selection" data-placeholder=" Select hour..."
-                                class="form-control chosen-select" style="width:350px;" tabindex="2">
-
-                        </select>
-                    </div>
-                    <label class="font-normal">
-                        Minute
-                    </label>
-                    <div class="input-group">
-                        <select id="minute_selection" data-placeholder=" Select minute..."
-                                class="form-control chosen-select" style="width:350px;" tabindex="2">
-                            <option value="type1">
-                               00
-                            </option>
-                            <option value="type2">
-                                15
-                            </option>
-                            <option value="type3">
-                                30
-                            </option>
-                            <option value="type4">
-                                45
-                            </option>
 
 
-                        </select>
-                    </div>
-                </div>
+                <div class="form-group ">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label class="font-normal">
+                                            Hour
+                                        </label>
+                                        <div class="input-group">
+                                            <select id="hour_selection" data-placeholder=" Select hour..." class="form-control chosen-select" style="width:350px;" tabindex="2">
+                                        </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="font-normal">
+                                            Minute
+                                        </label>
+                                        <div class="input-group">
+                                                <select id="minute_selection" data-placeholder=" Select minute..."
+                                        class="form-control chosen-select" style="width:350px;" tabindex="2">
+                                        <option value="00">
+                                            00
+                                        </option>
+                                        <option value="15">
+                                            15
+                                        </option>
+                                        <option value="30">
+                                            30
+                                        </option>
+                                        <option value="45">
+                                            45
+                                        </option>
+                                        </select>
+                                        </div>
+                                     </div>
+                                </div>
+                            </div>
 
-                <div class="form-group">
-                    <label class="font-normal">
-                        Meeting type
-                    </label>
-                    <div class="input-group">
-                        <select id="type_selection" data-placeholder=" Select type..."
-                                class="form-control chosen-select" style="width:350px;" tabindex="2">
+                            <div class="form-group">
+                                <label class="font-normal">
+                                    Meeting type
+                                </label>
+                                <div class="input-group">
+                                    <select id="type_selection" data-placeholder=" Select type..."
+                                            class="form-control chosen-select" style="width:350px;" tabindex="2">
 
-                        </select>
-                    </div>
-                </div>
+                                    </select>
+                                </div>
+                            </div>
 
             </div>
             <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" onclick="saveChanges()" data-dismiss="modal">Save
-                changes
-            </button>
-        </div>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="saveChanges()" data-dismiss="modal">Save
+                    changes
+                </button>
+            </div>
     </div>
 </div>
 </div>
@@ -120,13 +151,11 @@ Modal-->
 <script src="js/jquery.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <script src="js/jquery-ui.js"></script>
+<script src="js/auth.js"></script>
 
 <script>
     var userId = 0;
     var authenticatedUser = 0;
-
-
-
 
     $(document).ready(
         function () {
@@ -134,8 +163,7 @@ Modal-->
             initUiControls();
             // Käivitame selle koodi siis, kui HTML dokument lõplikult laetud.
             // $('#companies_list').append('Hello World');
-            giveAllMeetings();
-            getVisitCount();
+            getAuthenticatedUserNavBar();
 
         }
     );
@@ -145,6 +173,7 @@ Modal-->
         //Teeme AJAX pärinug kohtumiste nimekirje pärimiseks Java EE rakendusest.
         $.ajax(
             {
+
                 method: "GET",
                 url: "/rest/get_meetings?meeting_owner_id=" + userId,
                 dataType: "json",
@@ -176,6 +205,9 @@ Modal-->
         )
     }
 
+
+
+
     function prepareMeetingsAddingInterface(meetingUuid) {
         $('#meeting_uuid_field').val("");
         $('#meeting_subject_field').val("");
@@ -198,22 +230,23 @@ Modal-->
 
         if ($('#meeting_uuid_field').val() != "") {
             jsonObject = {
-                meetingOwnerId: userId,// $('').val()tee ümber, et ei oleks alati 2.
+                ownerId: userId,
                 uniqueHash: $('#meeting_uuid_field').val(),
                 subject: $('#meeting_subject_field').val(),
                 details: $('#meeting_details_field').val(),
                 date: $('#meeting_date_field').val(),
                 type: $('#type_selection').val(),
-                time: $('#meeting_time_field').val(),
+                time: $('#hour_selection').val() + ":" +  $('#minute_selection').val()
             };
         } else {
             jsonObject = {
-                meetingOwnerId: userId,// $('').val()tee ümber, et ei oleks alati 2.
+                ownerId: userId,
                 subject: $('#meeting_subject_field').val(),
                 details: $('#meeting_details_field').val(),
                 date: $('#meeting_date_field').val(),
                 type: $('#type_selection').val(),
-                time: $('#meeting_time_field').val(),
+                time: $('#hour_selection').val() + ":" +  $('#minute_selection').val()
+
             };
         }
 
@@ -302,7 +335,7 @@ Modal-->
 
         $.ajax({
                 complete: function addHours() {
-                    for (var i = 1; i < 24; i++) {
+                    for (var i = 1; i <= 24; i++) {
                         $('#hour_selection').append('<option value="' + i  + '">' + i  + '</option>');
                     }
                 }
@@ -338,19 +371,6 @@ Modal-->
     }
 
 
-    function getAuthenticatedUser() {
-        $.ajax(
-            {
-                url: "/rest/get_authenticated_user",
-                method: "GET",
-                complete: function (result) {
-                    authenticatedUser = result.responseJSON;
-                    userId = authenticatedUser.id;
-
-                }
-            }
-        );
-    }
 
 
 

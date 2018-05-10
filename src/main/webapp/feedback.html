@@ -13,7 +13,7 @@
     <p>Meeting uuid:  <span id="meeting_uuid_field"></span></p>
     <p>Meeting owner id:  <span id="meeting_holder_id_show"></span></p>
     <p>Koosoleku sisu:  <span id="meeting_subject"></span></p>
-    <p>Koosoleku toimumisaeg: <span id="meeting_date_show"></span></p>
+    <p>Koosoleku toimumisaeg: <span id="meeting_date_show"></span> <span id="meeting_time"></span></p>
     <p>Koosoleku details: <span id="meeting_details"></span></p>
 </div>
 
@@ -110,6 +110,7 @@
                 complete: function (response) {
                     console.log('Jep, the AJAX method (sumbitFeedbackform) works!');
                     //giveAllUsers();
+                    document.location = "/thankyou.html"
                 }
             }
         )
@@ -119,22 +120,6 @@
         return new URLSearchParams(window.location.search).get(param);
     }
 
-/*    function getMeetingOwnerName(){
-        $.ajax(
-            {
-                method: "GET",
-                url: "/rest/get_user?user_id=" +  23,
-                dataType: "json",
-                contenType: 'application/json',
-                complete: function (response) {
-                    var user = response.responseJSON;
-                    $('#meeting_holder_by_name').val(user.firstName);
-                }
-
-            }
-        );
-
-    }*/
 
 
 </script>

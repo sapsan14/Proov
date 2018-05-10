@@ -94,8 +94,12 @@ public class RestResource {
     @GET
     @Path("/get_users")
     @Produces(MediaType.APPLICATION_JSON) // anname välja formaadis APPLICATION_JSON
-    public List<User> getUsers() {
-        return OmniMeterService.getUsers();
+    public List<User> getUsers(@Context HttpServletRequest req) {
+        if (isUserAuthorized(req, "admin")) {
+                return OmniMeterService.getUsers();
+            } else {
+                return new ArrayList<>();
+            }
     }
 
     @GET
@@ -163,7 +167,7 @@ public class RestResource {
     @GET
     @Path("/get_user")
     @Produces(MediaType.APPLICATION_JSON)
-    public User getUser(@QueryParam("id") int userId){
+    public User getUser(@QueryParam("user_id") int userId){
         return OmniMeterService.getUser(userId);
     }
 
@@ -239,6 +243,17 @@ public class RestResource {
             return new ArrayList<>();
         }
     }
+    @GET
+    @Path("/get_all_meetings")
+    @Produces(MediaType.APPLICATION_JSON) // anname välja formaadis APPLICATION_JSON
+    public List<Meeting> getAllMeetings(@Context HttpServletRequest req) {
+        if (isUserAuthorized(req, "admin")) {
+            return OmniMeterService.getAllMeetings();
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
 
     @GET
     @Path("/set_cookie")

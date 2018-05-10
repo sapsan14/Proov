@@ -243,5 +243,20 @@ public class OmniMeterService {
         return meetingTypes;
     }
 
+    public static List<Meeting> getAllMeetings() {
+        List<Meeting> allmeetings = new ArrayList<>();
+        try {
+            ResultSet result = executeSql("select * from meeting");
+            if (result != null) {
+                while (result.next()) {
+                    allmeetings.add(new Meeting(result));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return allmeetings;
+    }
 }
 
