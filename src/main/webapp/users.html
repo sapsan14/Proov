@@ -9,14 +9,15 @@
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="#"><span id="user_first_last_name"></span></a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-                <a class="nav-link" href="#">    <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="#"> <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/meeting.html">Meetings</a>
@@ -25,7 +26,8 @@
                 <a class="nav-link" id="users_box" style="display: none;" href="/users.html">Users</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" id="all_meetings_box" style="display: none;" href="/allmeetings.html">All Meetings</a>
+                <a class="nav-link" id="all_meetings_box" style="display: none;" href="/allmeetings.html">All
+                    Meetings</a>
             </li>
         </ul>
         <form class="form-inline my-2 my-lg-0">
@@ -34,7 +36,7 @@
     </div>
 </nav>
 <div class="container">
-        <h1>List of all users</h1>
+    <h1>List of all users</h1>
 
     <table class="table">
         <thead>
@@ -74,49 +76,66 @@ Modal-->
                 </button>
             </div>
             <div class="modal-body">
-                <input type="hidden" id="user_id_field"/>
-                <input type="text" id="user_first_name_textbox" class="form-control" placeholder="First Name"/><br/>
-                <input type="text" id="user_last_name_textbox" class="form-control" placeholder="Last Name"/><br/>
-                <input type="text" id="user_password_textbox" class="form-control" placeholder="Password"/><br/>
 
                 <div class="form-group">
-                    <label class="font-normal">
-                        User role
-                    </label>
-                    <div class="input-group">
-                        <select id="role_selection" data-placeholder=" Select role..." class="form-control chosen-select" style="width:350px;" tabindex="2">
-                            <option value="admin">
-                                Admin (system admin)
-                            </option>
-                            <option value="user">
-                                User (Meeting organizer)
-                            </option>
-                            <option value="participant">
-                                Unregistered user (Meeting participant)
-                            </option>
-                        </select>
-                    </div>
+
+                    <input type="hidden" id="user_id_field"/>
+                    <input type="text" id="user_first_name_textbox" class="form-control" name="firstname"
+                           placeholder="First Name"/><br/>
+                    <span id="firstNameRequiredBox" style="display: none;">Insert first name</span>
+                    <input type="text" id="user_last_name_textbox" class="form-control" name="lastname"
+                           placeholder="Last Name"/><br/>
+                    <span id="lastNameRequiredBox" style="display: none;">Insert last name</span>
+                    <input type="text" id="user_password_textbox" class="form-control" name="password"
+                           placeholder="Password"/><br/>
+                    <span id="userpasswordRequiredBox" style="display: none;">Insert password</span>
+
                 </div>
 
 
+                <label class="font-normal">
+                    User role
+                </label>
+                <div class="input-group">
+                    <select id="role_selection" data-placeholder=" Select role..." class="form-control chosen-select"
+                            style="width:350px;" tabindex="2">
+                        <option value="admin">
+                            Admin (system admin)
+                        </option>
+                        <option value="user">
+                            User (Meeting organizer)
+                        </option>
+                        <option value="participant">
+                            Unregistered user (Meeting participant)
+                        </option>
+                    </select>
+                </div>
+                <span id="roleSelectionRequiredBox" style="display: none;">Insert role</span><br/>
+
+                <br/>
                 <input type="text" id="user_department_textbox" class="form-control" placeholder="Department"/><br/>
                 <input type="text" id="user_email_textbox" class="form-control" placeholder="Email"/><br/>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" onclick="saveChanges()" data-dismiss="modal">Save
-                    changes
-                </button>
+                <span id="userEmailRequiredBox" style="display: none;">Insert Email</span><br/>
+
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="saveChanges()" data-dismiss="modal">Save
+                        changes
+                    </button>
+                </div>
+
             </div>
         </div>
     </div>
 </div>
 
-
 <script src="js/jquery.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <script src="js/jquery-ui.js"></script>
 <script src="js/auth.js"></script>
+
+
 <script>
     $(document).ready(
         function () {
@@ -126,7 +145,6 @@ Modal-->
             // $('#companies_list').append('Hello World');
             giveAllUsers();
             getAuthenticatedUserNavBar();
-
         }
     );
 
@@ -166,6 +184,7 @@ Modal-->
     }
 
     function prepareUsersAddingInterface(userId) {
+        isUserInfoValid(true);
         $('#user_id_field').val("0");
         $('#user_first_name_textbox').val("");
         $('#user_last_name_textbox').val("");
@@ -176,36 +195,71 @@ Modal-->
         $('#userModal').modal('show');
     }
 
-    function saveChanges() {
-        var saveUrl = "";
-        if ($('#user_id_field').val() > 0) {
-            saveUrl = "/rest/modify_user";
-        } else {
-            saveUrl = "/rest/add_user";
+    function isUserInfoValid() {
+        var result = true;
+        if ($('#user_first_name_textbox').val() == "") {
+            $("#firstNameRequiredBox").show();
+            result = false;
         }
 
-        $.ajax(
-            {
-                method: "POST",
-                url: saveUrl,
-                dataType: "json",
-                contentType: 'application/json',
-                data: JSON.stringify(
-                    {
-                        id: $('#user_id_field').val() > 0 ? $('#user_id_field').val() : "0",
-                        firstName: $('#user_first_name_textbox').val(),
-                        lastName: $('#user_last_name_textbox').val(),
-                        password: $('#user_password_textbox').val(),
-                        persimissonsId: $('#role_selection').val(),
-                        department: $('#user_department_textbox').val(),
-                        email: $('#user_email_textbox').val()
-                    }
-                ),
-                complete: function (response) {
-                    giveAllUsers();
-                }
+        if ($('#user_last_name_textbox').val() == "") {
+            $("#lastNameRequiredBox").show();
+            result = false;
+        }
+
+        if ($('#user_password_textbox').val() == "") {
+            $("#userpasswordRequiredBox").show();
+            result = false;
+        }
+
+
+        if ($('#user_email_textbox').val() == "") {
+            $("#userEmailRequiredBox").show();
+            result = false;
+        }
+
+        if ($('#role_selection').val() != "") {
+            $("#roleSelectionRequiredBox").show();
+            result = false;
+        }
+
+        return result;
+    }
+
+    function saveChanges() {
+
+        if (isUserInfoValid()) {
+
+            var saveUrl = "";
+            if ($('#user_id_field').val() > 0) {
+                saveUrl = "/rest/modify_user";
+            } else {
+                saveUrl = "/rest/add_user";
             }
-        )
+
+            $.ajax(
+                {
+                    method: "POST",
+                    url: saveUrl,
+                    dataType: "json",
+                    contentType: 'application/json',
+                    data: JSON.stringify(
+                        {
+                            id: $('#user_id_field').val() > 0 ? $('#user_id_field').val() : "0",
+                            firstName: $('#user_first_name_textbox').val(),
+                            lastName: $('#user_last_name_textbox').val(),
+                            password: $('#user_password_textbox').val(),
+                            persimissonsId: $('#role_selection').val(),
+                            department: $('#user_department_textbox').val(),
+                            email: $('#user_email_textbox').val()
+                        }
+                    ),
+                    complete: function (response) {
+                        giveAllUsers();
+                    }
+                }
+            );
+        }
     }
 
 

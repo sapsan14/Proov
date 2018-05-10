@@ -81,12 +81,12 @@ Modal-->
                 </button>
             </div>
             <div class="modal-body">
+
                 <input type="hidden" id="meeting_id_field"/>
                 <input type="hidden" id="meeting_uuid_field"/><br/>
-                <input type="text" id="meeting_subject_field" class="form-control" placeholder="subject"/><br/>
-                <input type="text" id="meeting_details_field" class="form-control" placeholder="details"/><br/>
+                <input type="text" id="meeting_subject_field" class="form-control is-valid" placeholder="subject" /><br/>
+                <input type="text" id="meeting_details_field" class="form-control is-valid" placeholder="details" /><br/>
                 <input type="text" id="meeting_date_field" class="form-control" readonly="readonly" placeholder="date"/><br/>
-
 
                 <div class="form-group ">
                                 <div class="row">
@@ -135,18 +135,16 @@ Modal-->
                                     </select>
                                 </div>
                             </div>
-
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" onclick="saveChanges()" data-dismiss="modal">Save
+                <button type="submit" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" onclick="saveChanges()" data-dismiss="modal">Save
                     changes
                 </button>
             </div>
     </div>
 </div>
 </div>
-
 
 <script src="js/jquery.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
