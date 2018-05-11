@@ -9,7 +9,6 @@
 
 </head>
 <body>
-
 <div class="container" style="padding-top: 150px" ;>
     <div class="row justify-content-center" id="errorBox" style="display: none;">
         <div class=col-sm-4 style="color: red; font-weight: bold">
@@ -17,16 +16,19 @@
         </div>
     </div>
 
+
     <div class="row justify-content-center" id="loginBox" style="display: none">
         <div class="col-sm-4">
-            <input type="text" id="email" class="form-control" placeholder="Email" required><br/>
-            <input type="password" id="password" class="form-control" placeholder="Password" required><br/>
-            <button class="btn" onclick="logInUser();">Log In</button>
+            <input type="text" id="email" class="form-control" placeholder="Email" required="true"><br/>
+            <input type="password" id="password" class="form-control" placeholder="Password" required="true"><br/>
+            <button type="button" class="btn" onclick="logInUser();">Log In</button>
         </div>
     </div>
+
+
     <div class="row justify-content-center" id="logoutBox" style="display: none">
         <div class="col-sm-4">
-            Oled sisse loginud.<br>
+            Oled sisse loginud<br>
             <button class = "btn" onclick="logOutUser();">Logout</button>
         </div>
         <div class="col-sm-4">

@@ -96,10 +96,10 @@ public class RestResource {
     @Produces(MediaType.APPLICATION_JSON) // anname välja formaadis APPLICATION_JSON
     public List<User> getUsers(@Context HttpServletRequest req) {
         if (isUserAuthorized(req, "admin")) {
-                return OmniMeterService.getUsers();
-            } else {
-                return new ArrayList<>();
-            }
+            return OmniMeterService.getUsers();
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     @GET
@@ -108,7 +108,6 @@ public class RestResource {
     public List<MeetingType> getMeetingTypes() {
         return OmniMeterService.getMeetingTypes();
     }
-
 
 
     @POST
@@ -135,15 +134,39 @@ public class RestResource {
 //    @Produces(MediaType.APPLICATION_JSON) // anname välja formaadis APPLICATION_JSON
 //    public Meeting getMeeting(@QueryParam("meeting_id") int meeting_id){
 //        return OmniMeterService.getMeetingById(meeting_id);
-   // }
+    // }
 
     @GET
     @Path("/get_meeting_by_uuid")
     @Produces(MediaType.APPLICATION_JSON) // anname välja formaadis APPLICATION_JSON
-    public Meeting getMeeting(@QueryParam("meeting_uuid") String meeting_uuid){
+    public Meeting getMeeting(@QueryParam("meeting_uuid") String meeting_uuid) {
         return OmniMeterService.getMeetingByUuid(meeting_uuid);
     }
 
+    @GET
+    @Path("/get_meeting_stats_by_uuid")
+    @Produces(MediaType.APPLICATION_JSON) // anname välja formaadis APPLICATION_JSON
+    public Stats getStats(@QueryParam("meeting_uuid") String meeting_uuid) {
+        return OmniMeterService.getStatsByUuid(meeting_uuid);
+    }
+
+    @GET
+    @Path("/get_meeting_feedback_by_uuid")
+    @Produces(MediaType.APPLICATION_JSON) // anname välja formaadis APPLICATION_JSON
+    public List<Feedback> getFeedback(@QueryParam("meeting_uuid") String meeting_uuid) {
+        return OmniMeterService.getFeedbackByUuid(meeting_uuid);
+    }
+
+    @GET
+    @Path("/get_meetings")
+    @Produces(MediaType.APPLICATION_JSON) // anname välja formaadis APPLICATION_JSON
+    public List<Meeting> getMeetings(@Context HttpServletRequest req, @QueryParam("meeting_owner_id") int meetingOwnerId) {
+        if (isUserAuthorized(req, "admin") || isUserAuthorized(req, "user")) {
+            return OmniMeterService.getMeetings(meetingOwnerId);
+        } else {
+            return new ArrayList<>();
+        }
+    }
 
 
     @POST
@@ -167,22 +190,23 @@ public class RestResource {
     @GET
     @Path("/get_user")
     @Produces(MediaType.APPLICATION_JSON)
-    public User getUser(@QueryParam("user_id") int userId){
+    public User getUser(@QueryParam("user_id") int userId) {
         return OmniMeterService.getUser(userId);
     }
 
     @POST
     @Path("/delete_user")
     @Produces(MediaType.TEXT_PLAIN)
-    public String deleteUser(@FormParam("user_id") int userId){
+    public String deleteUser(@FormParam("user_id") int userId) {
         OmniMeterService.deleteUser(userId);
-        return "OK";
+        return "OK user deleted";
     }
+
 
     @POST
     @Path("/delete_meeting")
     @Produces(MediaType.TEXT_PLAIN)
-    public String deleteMeeting(@FormParam("uuid") String uuid){
+    public String deleteMeeting(@FormParam("uuid") String uuid) {
         OmniMeterService.deleteMeeting(uuid);
         return "OK";
     }
@@ -191,7 +215,7 @@ public class RestResource {
     @GET
     @Path("/get_company")
     @Produces(MediaType.APPLICATION_JSON)
-    public Company getCompany(@QueryParam("company_id") int companyID){
+    public Company getCompany(@QueryParam("company_id") int companyID) {
         return CompanyService.getCompany(companyID);
     }
 
@@ -218,7 +242,7 @@ public class RestResource {
     @POST
     @Path("/delete_company")
     @Produces(MediaType.TEXT_PLAIN)
-    public String deleteCompany(@FormParam("company_id") int companyId){
+    public String deleteCompany(@FormParam("company_id") int companyId) {
         CompanyService.deleteCompany(companyId);
         return "OK";
     }
@@ -233,16 +257,6 @@ public class RestResource {
     }
 
 
-        @GET
-    @Path("/get_meetings")
-    @Produces(MediaType.APPLICATION_JSON) // anname välja formaadis APPLICATION_JSON
-    public List<Meeting> getMeetings(@Context HttpServletRequest req, @QueryParam("meeting_owner_id") int meetingOwnerId) {
-        if (isUserAuthorized(req, "admin") || isUserAuthorized(req, "user")) {
-            return OmniMeterService.getMeetings(meetingOwnerId);
-        } else {
-            return new ArrayList<>();
-        }
-    }
     @GET
     @Path("/get_all_meetings")
     @Produces(MediaType.APPLICATION_JSON) // anname välja formaadis APPLICATION_JSON
@@ -258,8 +272,8 @@ public class RestResource {
     @GET
     @Path("/set_cookie")
     @Produces(MediaType.TEXT_PLAIN)
-        public Response setCookie(){
-        NewCookie myCookie = new NewCookie ("MY_TEST_COOKIE", String.valueOf(Math.random()), "/", null, null, -1,  false, false);
+    public Response setCookie() {
+        NewCookie myCookie = new NewCookie("MY_TEST_COOKIE", String.valueOf(Math.random()), "/", null, null, -1, false, false);
 
         return Response.ok("Cookie set successfully!").cookie(myCookie).build();
     }
@@ -267,7 +281,7 @@ public class RestResource {
     @GET
     @Path("/read_cookie")
     @Produces(MediaType.TEXT_PLAIN)
-        public String readCookie(@CookieParam("MY_TEST_COOKIE") String myCookie) {
+    public String readCookie(@CookieParam("MY_TEST_COOKIE") String myCookie) {
         return "The cookie is " + myCookie;
     }
 
@@ -275,15 +289,15 @@ public class RestResource {
     @GET
     @Path("/set_session_info")
     @Produces(MediaType.TEXT_PLAIN)
-    public String setSessionInfo(@Context HttpServletRequest req){
+    public String setSessionInfo(@Context HttpServletRequest req) {
         HttpSession session = req.getSession(true);
-        String myTestAttr = (String)session.getAttribute("TEST");
+        String myTestAttr = (String) session.getAttribute("TEST");
         if (myTestAttr != null) {
             return "Session attribute found: " + myTestAttr;
         } else {
             // Session attribute was not found
             session.setAttribute("TEST", String.valueOf(Math.random()));
-            return "Session attribute generated: " + (String)session.getAttribute("TEST");
+            return "Session attribute generated: " + (String) session.getAttribute("TEST");
         }
     }
 
@@ -291,7 +305,7 @@ public class RestResource {
     @Path("/authenticate_user")
     @Produces(MediaType.TEXT_PLAIN)
     public String authenticateUser(@Context HttpServletRequest req, @FormParam("email") String email, @FormParam("password") String password) {
-        User user = AuthenticationService.getUser (email, password);
+        User user = AuthenticationService.getUser(email, password);
         if (user == null) {
             // Autentimine ebaõnnestus
             return "FAIL";
@@ -301,37 +315,37 @@ public class RestResource {
             session.setAttribute("AUTH_USER", user);
             return "SUCCESS";
         }
-     }
+    }
 
-     @GET
-     @Path("/get_authenticated_user")
-     @Produces(MediaType.APPLICATION_JSON)
-    public User getAuthenticatedUser (@Context HttpServletRequest req) {
+    @GET
+    @Path("/get_authenticated_user")
+    @Produces(MediaType.APPLICATION_JSON)
+    public User getAuthenticatedUser(@Context HttpServletRequest req) {
         HttpSession session = req.getSession(true);
-         if (session.getAttribute("AUTH_USER") != null) {
-             //Kasutaja on sisse loginud
-             return (User)session.getAttribute("AUTH_USER");
-         } else {
-             // Ksutaja ei ole sisse loginud
-             return new User(); //
-         }
-     }
+        if (session.getAttribute("AUTH_USER") != null) {
+            //Kasutaja on sisse loginud
+            return (User) session.getAttribute("AUTH_USER");
+        } else {
+            // Ksutaja ei ole sisse loginud
+            return new User(); //
+        }
+    }
 
     @GET
     @Path("/logout")
     @Produces(MediaType.TEXT_PLAIN)
-    public String logout (@Context HttpServletRequest req) {
+    public String logout(@Context HttpServletRequest req) {
         HttpSession session = req.getSession(true);
         session.removeAttribute("AUTH_USER");
         return "SUCCESS";
     }
 
-    private boolean isUserAuthorized (@Context HttpServletRequest req, String expectedRole) {
+    private boolean isUserAuthorized(@Context HttpServletRequest req, String expectedRole) {
         HttpSession session = req.getSession(true);
         User user = null;
         if (session.getAttribute("AUTH_USER") != null) {
             // Kasutaja on sisse loginud
-            user = (User)session.getAttribute("AUTH_USER");
+            user = (User) session.getAttribute("AUTH_USER");
             return user.getPersimissonsId().equals(expectedRole);
         }
         return false;
@@ -340,7 +354,7 @@ public class RestResource {
     @GET
     @Path("/register_visit")
     @Produces(MediaType.TEXT_PLAIN)
-    public String registerVisit () {
+    public String registerVisit() {
         return VisitCounter.addVisit();
     }
 

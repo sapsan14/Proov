@@ -9,14 +9,15 @@
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="#"><span id="user_first_last_name"></span></a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-                <a class="nav-link" href="#">    <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="#"> <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/meeting.html">Meetings</a>
@@ -25,7 +26,8 @@
                 <a class="nav-link" id="users_box" style="display: none;" href="/users.html">Users</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" id="all_meetings_box" style="display: none;" href="/allmeetings.html">All Meetings</a>
+                <a class="nav-link" id="all_meetings_box" style="display: none;" href="/allmeetings.html">All
+                    Meetings</a>
             </li>
         </ul>
         <form class="form-inline my-2 my-lg-0">
@@ -38,21 +40,21 @@
 <div class="container">
     <h1>List of all meetings</h1>
 
-    <div class="row justify-content-center": 250px>
+    <div class="row justify-content-center" : 250px>
         <div style="color: grey; border: 1px solid grey; border-radius: 3px; border-padding: 5px"></div>
-        Visit count:  <span id="visitCount">0</span>
+        Visit count: <span id="visitCount">0</span>
     </div>
 
     <table class="table">
         <thead>
         <tr>
             <th scope="col">Meeting feedback Link</th>
+            <th scope="col">Owner</th>
             <th scope="col">Subject</th>
             <th scope="col">Details</th>
             <th scope="col">Date</th>
             <th scope="col">Time</th>
             <th scope="col">Type</th>
-
 
 
         </tr>
@@ -101,6 +103,7 @@
 
                         var meetingRow = "<tr>";
                         meetingRow = meetingRow + "<td><a href=../feedback.html?uuid=" + meetings[i].uniqueHash + ">" + "feedback.html?uuid=" + meetings[i].uniqueHash + "</a></td>";
+                        meetingRow = meetingRow + "<td>" + meetings[i].meetingHolder.firstName + " " + meetings[i].meetingHolder.lastName + "</td>";
                         meetingRow = meetingRow + "<td>" + meetings[i].subject + "</td>";
                         meetingRow = meetingRow + "<td>" + meetings[i].details + "</td>";
                         meetingRow = meetingRow + "<td>" + meetings[i].date + "</td>";

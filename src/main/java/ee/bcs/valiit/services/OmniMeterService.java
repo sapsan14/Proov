@@ -1,10 +1,8 @@
 package ee.bcs.valiit.services;
 
-import ee.bcs.valiit.model.Feedbackform;
-import ee.bcs.valiit.model.Meeting;
-import ee.bcs.valiit.model.MeetingType;
-import ee.bcs.valiit.model.User;
+import ee.bcs.valiit.model.*;
 
+import javax.xml.stream.events.Comment;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -90,22 +88,6 @@ public class OmniMeterService {
         }
 
         return users;
-    }
-
-    public static List<Meeting> getMeetings(int meetingOwnerId) {
-        List<Meeting> meetings = new ArrayList<Meeting>();
-        try {
-            ResultSet result = executeSql("select * from meeting where meeting_owner_id =" + meetingOwnerId);
-            if (result != null) {
-                while (result.next()) {
-                    meetings.add(new Meeting(result));
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return meetings;
     }
 
 
@@ -217,7 +199,7 @@ public class OmniMeterService {
     }
 
     public static void deleteUser(int userId) {
-        String sql = "DELETE FROM user where id = " + userId;
+        String sql = "DELETE FROM user where id = " + userId  + " And role_id <> 'admin' ";
         executeSql(sql);
     }
 
@@ -258,5 +240,59 @@ public class OmniMeterService {
 
         return allmeetings;
     }
-}
 
+    public static Stats getStatsByUuid(String meeting_uuid) {
+        String sql = "SELECT meeting_uuid, count(id) as count, avg(feedback_points) as avg from feedback_form where meeting_uuid=" + "'" + meeting_uuid + "'";
+        ResultSet result = executeSql(sql);
+        try {
+            if (result != null) {
+                if (result.next()) {
+                    Stats stats = new Stats(result);
+                    stats.setAverage(result.getFloat("avg"));
+                    stats.setCount(result.getInt("count"));
+                    return stats;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+
+
+    }
+
+    public static List<Feedback> getFeedbackByUuid(String meeting_uuid) {
+        List<Feedback> feedbackWithComments = new ArrayList<>();
+        try {
+            String sql = "SELECT feedback_comments, feedback_points from feedback_form where meeting_uuid =" + "'" + meeting_uuid + "'";
+            ResultSet result = executeSql(sql);
+            if (result != null) {
+                while (result.next()) {
+                    feedbackWithComments.add(new Feedback(result));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return feedbackWithComments;
+
+    }
+
+    public static List<Meeting> getMeetings(int meetingOwnerId) {
+        List<Meeting> meetings = new ArrayList<Meeting>();
+        try {
+            ResultSet result = executeSql("select * from meeting where meeting_owner_id =" + meetingOwnerId);
+            if (result != null) {
+                while (result.next()) {
+                    meetings.add(new Meeting(result));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return meetings;
+    }
+}

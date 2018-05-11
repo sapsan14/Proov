@@ -9,14 +9,15 @@
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="#"><span id="user_first_last_name"></span></a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-                <a class="nav-link" href="#">    <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="#"> <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/meeting.html">Meetings</a>
@@ -25,7 +26,8 @@
                 <a class="nav-link" id="users_box" style="display: none;" href="/users.html">Users</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" id="all_meetings_box" style="display: none;" href="/allmeetings.html">All Meetings</a>
+                <a class="nav-link" id="all_meetings_box" style="display: none;" href="/allmeetings.html">All
+                    Meetings</a>
             </li>
         </ul>
         <form class="form-inline my-2 my-lg-0">
@@ -38,10 +40,10 @@
 <div class="container">
     <h1>List of all meetings</h1>
 
-    <div class="row justify-content-center": 250px>
-    <div style="color: grey; border: 1px solid grey; border-radius: 3px; border-padding: 5px"></div>
-    Visit count:  <span id="visitCount">0</span>
-</div>
+    <div class="row justify-content-center" : 250px>
+        <div style="color: grey; border: 1px solid grey; border-radius: 3px; border-padding: 5px"></div>
+        Visit count: <span id="visitCount">0</span>
+    </div>
 
     <table class="table">
         <thead>
@@ -52,6 +54,7 @@
             <th scope="col">Date</th>
             <th scope="col">Time</th>
             <th scope="col">Type</th>
+            <th scope="col"></th>
             <th scope="col"></th>
             <th scope="col"></th>
 
@@ -84,67 +87,113 @@ Modal-->
 
                 <input type="hidden" id="meeting_id_field"/>
                 <input type="hidden" id="meeting_uuid_field"/><br/>
-                <input type="text" id="meeting_subject_field" class="form-control is-valid" placeholder="subject" /><br/>
-                <input type="text" id="meeting_details_field" class="form-control is-valid" placeholder="details" /><br/>
+
+                <span id="meetingSubjectRequired" style="display: none; color: red">Required</span>
+                <input type="text" id="meeting_subject_field" class="form-control " placeholder="subject"/><br/>
+
+                <span id="meetingDetailsRequired" style="display: none; color: red">Required</span>
+                <input type="text" id="meeting_details_field" class="form-control " placeholder="details"/><br/>
+
+                <span id="meetingDateRequired" style="display: none; color: red">Required</span>
                 <input type="text" id="meeting_date_field" class="form-control" readonly="readonly" placeholder="date"/><br/>
 
                 <div class="form-group ">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <label class="font-normal">
-                                            Hour
-                                        </label>
-                                        <div class="input-group">
-                                            <select id="hour_selection" data-placeholder=" Select hour..." class="form-control chosen-select" style="width:350px;" tabindex="2">
-                                        </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="font-normal">
-                                            Minute
-                                        </label>
-                                        <div class="input-group">
-                                                <select id="minute_selection" data-placeholder=" Select minute..."
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="font-normal">
+                                Hour
+                            </label>
+                            <div class="input-group">
+                                <select id="hour_selection" data-placeholder=" Select hour..."
                                         class="form-control chosen-select" style="width:350px;" tabindex="2">
-                                        <option value="00">
-                                            00
-                                        </option>
-                                        <option value="15">
-                                            15
-                                        </option>
-                                        <option value="30">
-                                            30
-                                        </option>
-                                        <option value="45">
-                                            45
-                                        </option>
-                                        </select>
-                                        </div>
-                                     </div>
-                                </div>
+                                </select>
                             </div>
-
-                            <div class="form-group">
-                                <label class="font-normal">
-                                    Meeting type
-                                </label>
-                                <div class="input-group">
-                                    <select id="type_selection" data-placeholder=" Select type..."
-                                            class="form-control chosen-select" style="width:350px;" tabindex="2">
-
-                                    </select>
-                                </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="font-normal">
+                                Minute
+                            </label>
+                            <div class="input-group">
+                                <select id="minute_selection" data-placeholder=" Select minute..."
+                                        class="form-control chosen-select" style="width:350px;" tabindex="2">
+                                    <option value="00">
+                                        00
+                                    </option>
+                                    <option value="15">
+                                        15
+                                    </option>
+                                    <option value="30">
+                                        30
+                                    </option>
+                                    <option value="45">
+                                        45
+                                    </option>
+                                </select>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="font-normal">
+                        Meeting type
+                    </label>
+                    <div class="input-group">
+
+                        <span id="meetingTypeRequired" style="display: none; color: red">Required</span><br/><br/>
+                        <select id="type_selection" data-placeholder=" Select type..."
+                                class="form-control chosen-select" style="width:350px;" tabindex="2">
+                        </select>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="submit" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary" onclick="saveChanges()" data-dismiss="modal">Save
+                <button type="submit" class="btn btn-primary" onclick="saveChanges()">Save
                     changes
                 </button>
             </div>
+        </div>
     </div>
 </div>
+
+<div class="modal fade" id="statModal" tabindex="-1" role="dialog" aria-labelledby="statModal"
+     aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="statisticModal">Statistics about the meeting</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Average feedback for the meeting is:. <span id ="meeting_avg"/></p>
+                <p>Average count for the meeting is:. <span id ="meeting_count"/></p>
+
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">Comments</th>
+                            <th scope="col">Grade</th>
+
+                        </tr>
+                        </thead>
+                        <tbody id="feedback_list">
+
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
 </div>
+
 
 <script src="js/jquery.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
@@ -166,9 +215,54 @@ Modal-->
         }
     );
 
+    function isMeetingInfoValid() {
+        var result = true;
+        if ($('#meeting_subject_field').val() == "") {
+            $("#meetingSubjectRequired").show();
+            result = false;
+        } else if ($('#meeting_details_field').val() == "") {
+            $("#meetingDetailsRequired").show();
+            result = false;
+        } else if ($('#type_selection').val() == null) {
+            $("#meetingTypeRequired").show();
+            result = false;
+        } else if ($('#meeting_date_field').val() == "") {
+            $("#meetingDateRequired").show();
+            result = false;
+        }
+        return result;
+    }
+
+    function giveFeedback(meetingUUID) {
+        //Teeme AJAX pärinug kohtumiste nimekirje pärimiseks Java EE rakendusest.
+
+        $.ajax(
+            {
+
+                method: "GET",
+                url: "/rest/get_meeting_feedback_by_uuid?meeting_uuid=" + meetingUUID,
+                dataType: "json",
+
+                complete: function (response) {
+                    $('#feedback_list').empty();
+                    var feedback = response.responseJSON;
+                    for (var i = 0; i < feedback.length; i++) {
+                        var feedBackRow = "<tr>";
+                        feedBackRow = feedBackRow + "<td>" + feedback[i].comment +"</td>";
+                        feedBackRow = feedBackRow + "<td>" + feedback[i].grade + "</td>";
+
+                        $('#feedback_list').append(feedBackRow);
+                    }
+                    // käivitatakse siis, kui päring on õnnestunud
+                    console.log('Jep, the AJAX method works!')
+                }
+            }
+        )
+    }
 
     function giveAllMeetings() {
         //Teeme AJAX pärinug kohtumiste nimekirje pärimiseks Java EE rakendusest.
+
         $.ajax(
             {
 
@@ -190,6 +284,7 @@ Modal-->
                         meetingRow = meetingRow + "<td>" + meetings[i].date + "</td>";
                         meetingRow = meetingRow + "<td>" + meetings[i].time + "</td>";
                         meetingRow = meetingRow + "<td>" + meetings[i].type + "</td>";
+                        meetingRow = meetingRow + '<td><button class="btn btn-sm" onclick="prepareMeetingStats(' + '&quot;' + meetings[i].uniqueHash + '&quot;' + ');">Stats</button></td>';
                         meetingRow = meetingRow + '<td><button class="btn btn-sm" onclick="editMeeting(' + '&quot;' + meetings[i].uniqueHash + '&quot;' + ');">Edit</button></td>';
                         meetingRow = meetingRow + '<td><button class="btn btn-sm btn-danger" onclick="deleteMeeting(' + '&quot;' + meetings[i].uniqueHash + '&quot;' + ');">Remove</button></td>';
 
@@ -204,8 +299,6 @@ Modal-->
     }
 
 
-
-
     function prepareMeetingsAddingInterface(meetingUuid) {
         $('#meeting_uuid_field').val("");
         $('#meeting_subject_field').val("");
@@ -213,54 +306,83 @@ Modal-->
         $('#meeting_date_field').val("");
         $('#meeting_time_field').val("");
         $('#type_selection').val("");
+        $("#meetingSubjectRequired").hide();
+        $("#meetingDetailsRequired").hide();
+        $("#meetingTypeRequired").hide();
+        $("#meetingDateRequired").hide();
         $('#meetingModal').modal('show');
     }
 
-    function saveChanges() {
-        var saveUrl = "";
-        if ($('#meeting_uuid_field').val() != "") {
-            saveUrl = "/rest/modify_meeting";
-        } else {
-            saveUrl = "/rest/add_meeting";
-        }
-
-        var jsonObject = null;
-
-        if ($('#meeting_uuid_field').val() != "") {
-            jsonObject = {
-                ownerId: userId,
-                uniqueHash: $('#meeting_uuid_field').val(),
-                subject: $('#meeting_subject_field').val(),
-                details: $('#meeting_details_field').val(),
-                date: $('#meeting_date_field').val(),
-                type: $('#type_selection').val(),
-                time: $('#hour_selection').val() + ":" +  $('#minute_selection').val()
-            };
-        } else {
-            jsonObject = {
-                ownerId: userId,
-                subject: $('#meeting_subject_field').val(),
-                details: $('#meeting_details_field').val(),
-                date: $('#meeting_date_field').val(),
-                type: $('#type_selection').val(),
-                time: $('#hour_selection').val() + ":" +  $('#minute_selection').val()
-
-            };
-        }
-
+    function prepareMeetingStats(meetingUuid) {
         $.ajax(
             {
-                method: "POST",
-                url: saveUrl,
+                method: "GET",
+                url: "/rest/get_meeting_stats_by_uuid?meeting_uuid=" + meetingUuid,
                 dataType: "json",
-                contentType: 'application/json',
-                data: JSON.stringify(jsonObject),
+                contenType: 'application/json',
                 complete: function (response) {
-                    giveAllMeetings();
+                    var stats = response.responseJSON;
+                    $('#meeting_avg').html(stats.average);
+                    $('#meeting_count').html(stats.count);
+                    giveFeedback(meetingUuid);
+                    $('#statModal').modal('show');
+
                 }
+
             }
-        )
+        );
     }
+
+
+    function saveChanges() {
+        if (isMeetingInfoValid()) {
+            var saveUrl = "";
+            if ($('#meeting_uuid_field').val() != "") {
+                saveUrl = "/rest/modify_meeting";
+            } else {
+                saveUrl = "/rest/add_meeting";
+            }
+
+            var jsonObject = null;
+
+            if ($('#meeting_uuid_field').val() != "") {
+                jsonObject = {
+                    ownerId: userId,
+                    uniqueHash: $('#meeting_uuid_field').val(),
+                    subject: $('#meeting_subject_field').val(),
+                    details: $('#meeting_details_field').val(),
+                    date: $('#meeting_date_field').val(),
+                    type: $('#type_selection').val(),
+                    time: $('#hour_selection').val() + ":" + $('#minute_selection').val()
+                };
+            } else {
+                jsonObject = {
+                    ownerId: userId,
+                    subject: $('#meeting_subject_field').val(),
+                    details: $('#meeting_details_field').val(),
+                    date: $('#meeting_date_field').val(),
+                    type: $('#type_selection').val(),
+                    time: $('#hour_selection').val() + ":" + $('#minute_selection').val()
+
+                };
+            }
+
+            $.ajax(
+                {
+                    method: "POST",
+                    url: saveUrl,
+                    dataType: "json",
+                    contentType: 'application/json',
+                    data: JSON.stringify(jsonObject),
+                    complete: function (response) {
+                        $('#meetingModal').modal('hide');
+                        giveAllMeetings();
+                    }
+                }
+            )
+        }
+    }
+
 
     function deleteMeeting(meetingUuid) {
         if (confirm("Are you sure, you want to delete the meeting?")) {
@@ -294,6 +416,10 @@ Modal-->
                     $('#meeting_date_field').val(meeting.date);
                     $('#meeting_time_field').val(meeting.time);
                     $('#type_selection').val(meeting.type);
+                    $("#meetingSubjectRequired").hide();
+                    $("#meetingDetailsRequired").hide();
+                    $("#meetingTypeRequired").hide();
+                    $("#meetingDateRequired").hide();
                     $('#meetingModal').modal('show');
                 }
 
@@ -315,6 +441,7 @@ Modal-->
             }
         );
 
+
         $.ajax(
             {
                 method: "GET",
@@ -334,7 +461,7 @@ Modal-->
         $.ajax({
                 complete: function addHours() {
                     for (var i = 1; i <= 24; i++) {
-                        $('#hour_selection').append('<option value="' + i  + '">' + i  + '</option>');
+                        $('#hour_selection').append('<option value="' + i + '">' + i + '</option>');
                     }
                 }
             }
@@ -367,11 +494,6 @@ Modal-->
             }
         );
     }
-
-
-
-
-
 
 
 </script>

@@ -4,10 +4,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
 
+import static ee.bcs.valiit.services.OmniMeterService.getUser;
+
 public class Meeting {
 
     private int id;
-    private int meetingOwnerId = 2;
+    private int meetingOwnerId;
     private String subject;
     private String uniqueHash = UUID.randomUUID().toString();
     private String type;
@@ -39,7 +41,7 @@ public class Meeting {
             this.setSubject(result.getString("subject"));
             this.setDetails(result.getString("details"));
             this.setUniqueHash(result.getString("uuid"));
-
+            this.setMeetingHolder(getUser(this.getOwnerId()));
             } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -65,70 +65,79 @@
 </div>
 <!--button, mis avab popupi, kus on juba placeholderitega valikud täitmiseks.
 Modal-->
-<div class="modal fade" id="userModal" tabindex="-1" role="dialog" aria-labelledby="userModalLabel"
-     aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addUser">User info</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-
-                <div class="form-group">
-
-                    <input type="hidden" id="user_id_field"/>
-                    <input type="text" id="user_first_name_textbox" class="form-control" name="firstname"
-                           placeholder="First Name"/><br/>
-                    <span id="firstNameRequiredBox" style="display: none;">Insert first name</span>
-                    <input type="text" id="user_last_name_textbox" class="form-control" name="lastname"
-                           placeholder="Last Name"/><br/>
-                    <span id="lastNameRequiredBox" style="display: none;">Insert last name</span>
-                    <input type="text" id="user_password_textbox" class="form-control" name="password"
-                           placeholder="Password"/><br/>
-                    <span id="userpasswordRequiredBox" style="display: none;">Insert password</span>
-
-                </div>
-
-
-                <label class="font-normal">
-                    User role
-                </label>
-                <div class="input-group">
-                    <select id="role_selection" data-placeholder=" Select role..." class="form-control chosen-select"
-                            style="width:350px;" tabindex="2">
-                        <option value="admin">
-                            Admin (system admin)
-                        </option>
-                        <option value="user">
-                            User (Meeting organizer)
-                        </option>
-                        <option value="participant">
-                            Unregistered user (Meeting participant)
-                        </option>
-                    </select>
-                </div>
-                <span id="roleSelectionRequiredBox" style="display: none;">Insert role</span><br/>
-
-                <br/>
-                <input type="text" id="user_department_textbox" class="form-control" placeholder="Department"/><br/>
-                <input type="text" id="user_email_textbox" class="form-control" placeholder="Email"/><br/>
-                <span id="userEmailRequiredBox" style="display: none;">Insert Email</span><br/>
-
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" onclick="saveChanges()" data-dismiss="modal">Save
-                        changes
+<form id="form1" role="form" data-toggle="validator" onsubmit="return false">
+    <div class="modal fade" id="userModal" tabindex="-1" role="dialog" aria-labelledby="userModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addUser">User info</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
+                <div class="modal-body">
 
+                    <div class="form-group">
+
+
+                        <input type="hidden" id="user_id_field"/>
+                        <span id="firstNameRequiredBox" style="display: none; color: red">Required</span>
+                        <input type="text" id="user_first_name_textbox" class="form-control" name="firstname"
+                               placeholder="First Name" required="true"><br/>
+
+                        <span id="lastNameRequiredBox" style="display: none; color: red">Required</span>
+                        <input type="text" id="user_last_name_textbox" class="form-control" name="lastname"
+                               placeholder="Last Name" required="true"><br/>
+
+                        <span id="userpasswordRequiredBox" style="display: none; color: red">Required</span>
+                        <input type="text" id="user_password_textbox" class="form-control" name="password"
+                               placeholder="Password"/><br/>
+
+
+                    </div>
+
+
+                    <label class="font-normal">
+                        User role
+                    </label>
+                    <div class="input-group">
+                        <span id="roleSelectionRequiredBox" style="display: none; color: red">Required</span>
+                        <select id="role_selection" data-placeholder=" Select role..."
+                                class="form-control chosen-select"
+                                style="width:350px;" tabindex="2">
+                            <option value="user">
+                                User (Meeting organizer)
+                            </option>
+                            <option value="admin">
+                                Admin (system admin)
+                            </option>
+                            <option value="participant">
+                                Unregistered user (Meeting participant)
+                            </option>
+                        </select>
+                    </div>
+
+                    <br/>
+                    <span id="userDepartmentRequiredBox" style="display: none; color: red">Required</span>
+
+                    <input type="text" id="user_department_textbox" class="form-control" placeholder="Department"/><br/>
+
+                    <span id="userEmailRequiredBox" style="display: none; color: red">Required</span>
+                    <input type="text" id="user_email_textbox" class="form-control" placeholder="Email"/><br/>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="save_button" onclick="saveChanges()">Save
+                            changes
+                        </button>
+                    </div>
+
+                </div>
             </div>
         </div>
     </div>
-</div>
+</form>
 
 <script src="js/jquery.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
@@ -184,7 +193,7 @@ Modal-->
     }
 
     function prepareUsersAddingInterface(userId) {
-        isUserInfoValid(true);
+
         $('#user_id_field').val("0");
         $('#user_first_name_textbox').val("");
         $('#user_last_name_textbox').val("");
@@ -200,128 +209,127 @@ Modal-->
         if ($('#user_first_name_textbox').val() == "") {
             $("#firstNameRequiredBox").show();
             result = false;
-        }
-
-        if ($('#user_last_name_textbox').val() == "") {
+        } else if ($('#user_last_name_textbox').val() == "") {
             $("#lastNameRequiredBox").show();
             result = false;
-        }
-
-        if ($('#user_password_textbox').val() == "") {
+        } else if ($('#user_password_textbox').val() == "") {
             $("#userpasswordRequiredBox").show();
             result = false;
-        }
-
-
-        if ($('#user_email_textbox').val() == "") {
+        } else if ($('#user_email_textbox').val() == "") {
             $("#userEmailRequiredBox").show();
             result = false;
-        }
-
-        if ($('#role_selection').val() != "") {
+        } else if ($('#role_selection').val() == "") {
             $("#roleSelectionRequiredBox").show();
             result = false;
+        } else if ($('#user_department_textbox').val() == "") {
+            $("#userDepartmentRequiredBox").show();
+            result = false;
         }
-
         return result;
     }
 
-    function saveChanges() {
+        function saveChanges() {
 
-        if (isUserInfoValid()) {
+            if (isUserInfoValid()) {
+                var saveUrl = "";
+                if ($('#user_id_field').val() > 0) {
+                    saveUrl = "/rest/modify_user";
+                } else {
+                    saveUrl = "/rest/add_user";
+                }
 
-            var saveUrl = "";
-            if ($('#user_id_field').val() > 0) {
-                saveUrl = "/rest/modify_user";
-            } else {
-                saveUrl = "/rest/add_user";
-            }
-
-            $.ajax(
-                {
-                    method: "POST",
-                    url: saveUrl,
-                    dataType: "json",
-                    contentType: 'application/json',
-                    data: JSON.stringify(
-                        {
-                            id: $('#user_id_field').val() > 0 ? $('#user_id_field').val() : "0",
-                            firstName: $('#user_first_name_textbox').val(),
-                            lastName: $('#user_last_name_textbox').val(),
-                            password: $('#user_password_textbox').val(),
-                            persimissonsId: $('#role_selection').val(),
-                            department: $('#user_department_textbox').val(),
-                            email: $('#user_email_textbox').val()
+                $.ajax(
+                    {
+                        method: "POST",
+                        url: saveUrl,
+                        dataType: "json",
+                        contentType: 'application/json',
+                        data: JSON.stringify(
+                            {
+                                id: $('#user_id_field').val() > 0 ? $('#user_id_field').val() : "0",
+                                firstName: $('#user_first_name_textbox').val(),
+                                lastName: $('#user_last_name_textbox').val(),
+                                password: $('#user_password_textbox').val(),
+                                persimissonsId: $('#role_selection').val(),
+                                department: $('#user_department_textbox').val(),
+                                email: $('#user_email_textbox').val()
+                            }
+                        ),
+                        complete: function (response) {
+                            $("#userDepartmentRequiredBox").hide();
+                            $("#roleSelectionRequiredBox").hide();
+                            $("#userEmailRequiredBox").hide();
+                            $("#userpasswordRequiredBox").hide();
+                            $("#lastNameRequiredBox").hide();
+                            $("#firstNameRequiredBox").hide();
+                            $('#userModal').modal('hide');
+                            giveAllUsers();
                         }
-                    ),
-                    complete: function (response) {
-                        giveAllUsers();
                     }
-                }
-            );
+                );
+            }
         }
-    }
 
 
-    function deleteUser(userId) {
-        if (confirm("Are you sure, you want to delete the user?")) {
+        function deleteUser(userId) {
+            if (confirm("Are you sure, you want to delete the user?")) {
+                $.ajax(
+                    {
+                        method: "POST",
+                        url: "/rest/delete_user",
+                        data: {
+                            "user_id": userId
+                        },
+                        complete: function (response) {
+                            giveAllUsers();
+                        }
+                    }
+                );
+            }
+
+
+        }
+
+        /*      function initUiControls() {
+
+                  $('#company_established_textbox').datepicker(
+                      {
+                          dateFormat: 'yy-mm-dd',
+                          showButtonPanel: true,
+                          changeMonth: true,
+                          changeYear: true,
+                          showOtherMonths: true,
+                          selectOtherMonths: true,
+                          yearRange: "-300:+0"
+                      }
+                  );
+              }*/
+
+        function editUser(userId) {
             $.ajax(
                 {
-                    method: "POST",
-                    url: "/rest/delete_user",
-                    data: {
-                        "user_id": userId
-                    },
+                    method: "GET",
+                    url: "/rest/get_user?user_id=" + userId,
+                    dataType: "json",
+                    contenType: 'application/json',
                     complete: function (response) {
-                        giveAllUsers();
+                        var user = response.responseJSON;
+                        $('#user_id_field').val(user.id);
+                        $('#user_first_name_textbox').val(user.firstName);
+                        $('#user_last_name_textbox').val(user.lastName);
+                        $('#user_email_textbox').val(user.email);
+                        $('#user_department_textbox').val(user.department);
+                        $('#user_password_textbox').val(user.password);
+                        $('#user_permission_textbox').val(user.persimissonsId);
+                        $('#userModal').modal('show');
+
                     }
+
                 }
             );
+
+
         }
-
-
-    }
-
-    /*      function initUiControls() {
-
-              $('#company_established_textbox').datepicker(
-                  {
-                      dateFormat: 'yy-mm-dd',
-                      showButtonPanel: true,
-                      changeMonth: true,
-                      changeYear: true,
-                      showOtherMonths: true,
-                      selectOtherMonths: true,
-                      yearRange: "-300:+0"
-                  }
-              );
-          }*/
-
-    function editUser(userId) {
-        $.ajax(
-            {
-                method: "GET",
-                url: "/rest/get_user?user_id=" + userId,
-                dataType: "json",
-                contenType: 'application/json',
-                complete: function (response) {
-                    var user = response.responseJSON;
-                    $('#user_id_field').val(user.id);
-                    $('#user_first_name_textbox').val(user.firstName);
-                    $('#user_last_name_textbox').val(user.lastName);
-                    $('#user_email_textbox').val(user.email);
-                    $('#user_department_textbox').val(user.department);
-                    $('#user_password_textbox').val(user.password);
-                    $('#user_permission_textbox').val(user.persimissonsId);
-                    $('#userModal').modal('show');
-
-                }
-
-            }
-        );
-
-
-    }
 
 
 </script>
