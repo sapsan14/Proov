@@ -31,7 +31,7 @@
             </li>
         </ul>
         <form class="form-inline my-2 my-lg-0">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit" onclick="logOutUser()">Logout</button>
+            <button class="btn btn-outline my-2 my-sm-0" type="submit" onclick="logOutUser()">Logout</button>
         </form>
     </div>
 </nav>
@@ -55,6 +55,8 @@
             <th scope="col">Date</th>
             <th scope="col">Time</th>
             <th scope="col">Type</th>
+            <th scope="col">Average</th>
+            <th scope="col">Count</th>
 
 
         </tr>
@@ -109,6 +111,8 @@
                         meetingRow = meetingRow + "<td>" + meetings[i].date + "</td>";
                         meetingRow = meetingRow + "<td>" + meetings[i].time + "</td>";
                         meetingRow = meetingRow + "<td>" + meetings[i].type + "</td>";
+                        meetingRow = meetingRow + "<td>" + meetings[i].meetingStats.average + "</td>";
+                        meetingRow = meetingRow + "<td>" + meetings[i].meetingStats.count + "</td>";
 
                         $('#meetings_list').append(meetingRow);
 

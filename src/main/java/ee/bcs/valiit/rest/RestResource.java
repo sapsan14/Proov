@@ -251,9 +251,11 @@ public class RestResource {
     @Path("/add_feedback")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
-    public String addFeedback(Feedbackform feedback) {
+    public Response addFeedback(Feedbackform feedback) {
         OmniMeterService.addFeedBack(feedback);
-        return "OK";
+        String cookieName = "feedback" + feedback.getMeetingUuid();
+        NewCookie myCookie = new NewCookie(cookieName, "true", "/", null, null, -1, false, false);
+        return Response.ok("OK").cookie(myCookie).build();
     }
 
 
@@ -269,14 +271,13 @@ public class RestResource {
     }
 
 
-    @GET
+/*    @GET
     @Path("/set_cookie")
     @Produces(MediaType.TEXT_PLAIN)
-    public Response setCookie() {
-        NewCookie myCookie = new NewCookie("MY_TEST_COOKIE", String.valueOf(Math.random()), "/", null, null, -1, false, false);
-
+    public Response setCookie(@FormParam("meeting_uuid") String meetingUuid) {
+        NewCookie myCookie = new NewCookie("feedbackcookie", meetingUuid, "/", null, null, -1, false, false);
         return Response.ok("Cookie set successfully!").cookie(myCookie).build();
-    }
+    }*/
 
     @GET
     @Path("/read_cookie")

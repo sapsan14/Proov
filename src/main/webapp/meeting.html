@@ -5,6 +5,7 @@
     <title>Meetings</title>
     <link rel="stylesheet" href="style/bootstrap.min.css"/>
     <link rel="stylesheet" href="style/jquery-ui.css"/>
+
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -31,11 +32,10 @@
             </li>
         </ul>
         <form class="form-inline my-2 my-lg-0">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit" onclick="logOutUser()">Logout</button>
+            <button class="btn btn-outline my-2 my-sm-0" type="submit" onclick="logOutUser()">Logout</button>
         </form>
     </div>
 </nav>
-
 
 <div class="container">
     <h1>List of all meetings</h1>
@@ -48,12 +48,14 @@
     <table class="table">
         <thead>
         <tr>
-            <th scope="col">Meeting feedback Link</th>
+            <th>Meeting feedback Link</th>
             <th scope="col">Subject</th>
             <th scope="col">Details</th>
             <th scope="col">Date</th>
             <th scope="col">Time</th>
             <th scope="col">Type</th>
+            <th scope="col">Average</th>
+            <th scope="col">Count</th>
             <th scope="col"></th>
             <th scope="col"></th>
             <th scope="col"></th>
@@ -168,8 +170,8 @@ Modal-->
                 </button>
             </div>
             <div class="modal-body">
-                <p>Average feedback for the meeting is:. <span id ="meeting_avg"/></p>
-                <p>Average count for the meeting is:. <span id ="meeting_count"/></p>
+                <p>Average feedback for the meeting is:. <span id="meeting_avg"/></p>
+                <p>Average count for the meeting is:. <span id="meeting_count"/></p>
 
                 <div class="table-responsive">
                     <table class="table">
@@ -215,6 +217,7 @@ Modal-->
         }
     );
 
+
     function isMeetingInfoValid() {
         var result = true;
         if ($('#meeting_subject_field').val() == "") {
@@ -248,7 +251,7 @@ Modal-->
                     var feedback = response.responseJSON;
                     for (var i = 0; i < feedback.length; i++) {
                         var feedBackRow = "<tr>";
-                        feedBackRow = feedBackRow + "<td>" + feedback[i].comment +"</td>";
+                        feedBackRow = feedBackRow + "<td>" + feedback[i].comment + "</td>";
                         feedBackRow = feedBackRow + "<td>" + feedback[i].grade + "</td>";
 
                         $('#feedback_list').append(feedBackRow);
@@ -278,12 +281,14 @@ Modal-->
 
 
                         var meetingRow = "<tr>";
-                        meetingRow = meetingRow + "<td><a href=../feedback.html?uuid=" + meetings[i].uniqueHash + ">" + "feedback.html?uuid=" + meetings[i].uniqueHash + "</a></td>";
+                        meetingRow = meetingRow + '<td><button class="btn btn-sm" onclick="copyLink(' + '&quot;' + meetings[i].uniqueHash + '&quot;' + ');">Feedback link</button></td>';
                         meetingRow = meetingRow + "<td>" + meetings[i].subject + "</td>";
                         meetingRow = meetingRow + "<td>" + meetings[i].details + "</td>";
                         meetingRow = meetingRow + "<td>" + meetings[i].date + "</td>";
                         meetingRow = meetingRow + "<td>" + meetings[i].time + "</td>";
                         meetingRow = meetingRow + "<td>" + meetings[i].type + "</td>";
+                        meetingRow = meetingRow + "<td>" + meetings[i].meetingStats.average + "</td>";
+                        meetingRow = meetingRow + "<td>" + meetings[i].meetingStats.count + "</td>";
                         meetingRow = meetingRow + '<td><button class="btn btn-sm" onclick="prepareMeetingStats(' + '&quot;' + meetings[i].uniqueHash + '&quot;' + ');">Stats</button></td>';
                         meetingRow = meetingRow + '<td><button class="btn btn-sm" onclick="editMeeting(' + '&quot;' + meetings[i].uniqueHash + '&quot;' + ');">Edit</button></td>';
                         meetingRow = meetingRow + '<td><button class="btn btn-sm btn-danger" onclick="deleteMeeting(' + '&quot;' + meetings[i].uniqueHash + '&quot;' + ');">Remove</button></td>';
@@ -298,7 +303,6 @@ Modal-->
         )
     }
 
-
     function prepareMeetingsAddingInterface(meetingUuid) {
         $('#meeting_uuid_field').val("");
         $('#meeting_subject_field').val("");
@@ -312,6 +316,29 @@ Modal-->
         $("#meetingDateRequired").hide();
         $('#meetingModal').modal('show');
     }
+
+    function copyLink(meetingUuid) {
+        function selectElementText(element) {
+            if (document.selection) {
+                var range = document.body.createTextRange();
+                range.moveToElementText(element);
+                range.select();
+            } else if (window.getSelection) {
+                var range = document.createRange();
+                range.selectNode(element);
+                window.getSelection().removeAllRanges();
+                window.getSelection().addRange(range);
+            }
+        }
+        var element = document.createElement('DIV');
+        element.textContent = "http://localhost:8080/feedback.html?uuid=" + meetingUuid;
+        document.body.appendChild(element);
+        selectElementText(element);
+        document.execCommand('copy');
+        alert("Feedback link copied: " + element.textContent);
+        element.remove();
+    }
+
 
     function prepareMeetingStats(meetingUuid) {
         $.ajax(

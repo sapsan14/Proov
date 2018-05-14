@@ -1,41 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="style/bootstrap.min.css"/>
+    <link rel="stylesheet" href="style/jquery-ui.css"/>
     <link rel="stylesheet" href="style/styles.css">
     <meta charset="UTF-8">
     <title>Feedback</title>
 </head>
 <body>
-<div class="meeting-owner-name">
-    <p>Koosoleku koostaja: <span id="meeting_holder_by_name"></span></p>
-</div>
-<div class="meeting">
-    <p>Meeting uuid:  <span id="meeting_uuid_field"></span></p>
-    <p>Meeting owner id:  <span id="meeting_holder_id_show"></span></p>
-    <p>Koosoleku sisu:  <span id="meeting_subject"></span></p>
-    <p>Koosoleku toimumisaeg: <span id="meeting_date_show"></span> <span id="meeting_time"></span></p>
-    <p>Koosoleku details: <span id="meeting_details"></span></p>
-</div>
+<div class="center-div">
+    <div class="container">
+        <!--<div class="table-responsive">-->
+            <table class="table">
+                <tbody class="table_body">
+                <tr class="meeting">
+                    <th scope="row" style="border-top-color: white"></th>
+                    <td style="border-top-color: white">Koosoleku koostaja: <span id="meeting_holder_by_name"></span></td>
+                </tr>
+                <tr class="feedback_row">
+                    <th scope="row" style="border-top-color: white"></th>
+                    <td style="border-top-color: white">Koosoleku sisu: <span id="meeting_subject"></span></td>
+                </tr>
+                <tr class="feedback_row">
+                    <th scope="row" style="border-top-color: white"></th>
+                    <td style="border-top-color: white">Koosoleku toimumisaeg: <span id="meeting_date_show"></span> <span
+                            id="meeting_time"></span></span></td>
+                </tr>
+                <tr class="feedback_row">
+                    <th scope="row" style="border-top-color: white"></th>
+                    <td style="border-top-color: white">Koosoleku details: <span id="meeting_details"></span></td>
+                </tr>
+                <tr>
+                    <th scope="row" style="border-top-color: white"></th>
+                    <td style="border-top-color: white">
+                        <form>
+                            <ul class="rating">
+                                <input type="radio" id="str5" name="rating" value="5"/><label for="str5"
+                                                                                              title="Amazing">5
+                                stars</label>
+                                <input type="radio" id="str4" name="rating" value="4"/><label for="str4" title="Good">4
+                                stars</label>
+                                <input type="radio" id="str3" name="rating" value="3"/><label for="str3"
+                                                                                              title="Average">3
+                                stars</label>
+                                <input type="radio" id="str2" name="rating" value="2"/><label for="str2"
+                                                                                              title="Not Good">2
+                                stars</label>
+                                <input type="radio" id="str1" name="rating" value="1"/><label for="str1" title="Bad">1
+                                star</label>
+                                <input type="hidden" id="meeting_rating_field"/>
+                            </ul>
+                        </form>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row" style="border-top-color: white"></th>
+                    <td style="border-top-color: white">
+                        <div class="form-group">
+                            <label class="comments" for="meeting_comment_textarea">Kommentaarid</label></br>
+                            <textarea class="form-control" id="meeting_comment_textarea" rows="3"></textarea>
+                        </div>
+                    </td>
+                </tr>
 
-<div class="txt-center">
-    <form>
-        <ul class="rating" >
-            <input type="radio" id="str5" name="rating" value="5"/><label for="str5" title="Amazing">5 stars</label>
-            <input type="radio" id="str4" name="rating" value="4"/><label for="str4" title="Good">4 stars</label>
-            <input type="radio" id="str3" name="rating" value="3"/><label for="str3" title="Average">3 stars</label>
-            <input type="radio" id="str2" name="rating" value="2"/><label for="str2" title="Not Good">2 stars</label>
-            <input type="radio" id="str1" name="rating" value="1"/><label for="str1" title="Bad">1 star</label>
-            <input type="hidden" id="meeting_rating_field" />
-
-        </ul>
-    </form>
-    <form>
-        <div class="form-group">
-            <label class="comments" for="meeting_comment_textarea">Kommentaarid</label></br>
-            <textarea class="form-control" id="meeting_comment_textarea" rows="3"></textarea>
-        </div>
-        <button type="button" class="btn btn-primary" onclick="submitFeedbackform()">Submit</button>
-    </form>
+                <tr>
+                    <th scope="row" style="border-top-color: white"></th>
+                    <td style="border-top-color: white">
+                        <button type="button" class="btn btn-primary" onclick="submitFeedbackform()">Submit</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        <!--</div>-->
+    </div>
+</div>
 </div>
 <script src="js/jquery.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
@@ -63,36 +101,59 @@
             });
 
             $('input:radio').change(
-                function(){
+                function () {
                     var userRating = this.value;
                     $('#meeting_rating_field').val(userRating);
                 });
         });
 
-    function getMeetingInfo() {
-        $.ajax(
-            {
-                method: "GET",
-                url: "/rest/get_meeting_by_uuid?meeting_uuid=" + meetingUUID,//meetingId - VAHETA ÄRA!!!!!,
-                dataType: "json",
-                complete: function (response) {
-                    var meeting = response.responseJSON;
-                    $('#meeting_uuid_field').html(meeting.uniqueHash);
-                    $('#meeting_holder_id_show').html(meeting.ownerId);
-                    $('#meeting_subject').html(meeting.subject);
-                    $('#meeting_date_show').html(meeting.date);
-                    $('#meeting_time').html(meeting.time);
-                    $('#meeting_type').html(meeting.type);
-                    $('#meeting_details').html(meeting.details);
-                    $('#meeting_holder_by_name').html(meeting.meetingHolder.firstName + ' ' + meeting.meetingHolder.lastName);
-                    console.log('Jep, meeting by uuid works!')
-                }
-
+    function getCookie(cname) {
+        var name = cname + "=";
+        var ca = document.cookie.split(';');
+        for(var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
             }
-        );
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
     }
 
-    function submitFeedbackform()  {
+    function getMeetingInfo() {
+        var cookieName = "feedback" + meetingUUID;
+        console.log(cookieName);
+
+        if (getCookie(cookieName)== "true") {
+            document.location = "/thankyou.html";
+        } else {
+
+            $.ajax(
+                {
+                    method: "GET",
+                    url: "/rest/get_meeting_by_uuid?meeting_uuid=" + meetingUUID,//meetingId - VAHETA ÄRA!!!!!,
+                    dataType: "json",
+                    complete: function (response) {
+                        var meeting = response.responseJSON;
+                        $('#meeting_uuid_field').html(meeting.uniqueHash);
+                        $('#meeting_holder_id_show').html(meeting.ownerId);
+                        $('#meeting_subject').html(meeting.subject);
+                        $('#meeting_date_show').html(meeting.date);
+                        $('#meeting_time').html(meeting.time);
+                        $('#meeting_type').html(meeting.type);
+                        $('#meeting_details').html(meeting.details);
+                        $('#meeting_holder_by_name').html(meeting.meetingHolder.firstName + ' ' + meeting.meetingHolder.lastName);
+                        console.log('Jep, meeting by uuid works!')
+                    }
+
+                }
+            );
+        }
+    }
+
+    function submitFeedbackform() {
         $.ajax(
             {
                 method: "POST",
@@ -116,10 +177,9 @@
         )
     }
 
-    function getParam(param){
+    function getParam(param) {
         return new URLSearchParams(window.location.search).get(param);
     }
-
 
 
 </script>
