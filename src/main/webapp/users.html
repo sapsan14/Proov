@@ -20,7 +20,7 @@
                 <a class="nav-link" href="#"> <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/meeting.html">Meetings</a>
+                <a class="nav-link" href="/meeting.html">Your Meetings</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" id="users_box" style="display: none;" href="/users.html">Users</a>
@@ -31,7 +31,7 @@
             </li>
         </ul>
         <form class="form-inline my-2 my-lg-0">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit" onclick="logOutUser()">Logout</button>
+            <button class="btn btn-outline my-2 my-sm-0" type="submit" onclick="logOutUser()">Logout</button>
         </form>
     </div>
 </nav>
@@ -48,6 +48,7 @@
             <th scope="col">Role</th>
             <th scope="col">Department</th>
             <th scope="col">Email</th>
+            <th scope="col">Average</th>
             <th scope="col"></th>
             <th scope="col"></th>
 
@@ -179,6 +180,7 @@ Modal-->
                         userRow = userRow + "<td>" + users[i].persimissonsId + "</td>";
                         userRow = userRow + "<td>" + users[i].department + "</td>";
                         userRow = userRow + "<td>" + users[i].email + "</td>";
+                        userRow = userRow + "<td>" + users[i].stats.average + "</td>";
                         userRow = userRow + '<td><button class="btn btn-sm" onclick="editUser(' + users[i].id + ');">Edit</button></td>';
                         userRow = userRow + '<td><button class="btn btn-sm btn-danger" onclick="deleteUser(' + users[i].id + ');">Remove</button></td>';
 

@@ -327,7 +327,7 @@ public class RestResource {
             //Kasutaja on sisse loginud
             return (User) session.getAttribute("AUTH_USER");
         } else {
-            // Ksutaja ei ole sisse loginud
+            // Kasutaja ei ole sisse loginud
             return new User(); //
         }
     }

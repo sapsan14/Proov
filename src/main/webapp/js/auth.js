@@ -25,7 +25,6 @@ function logInUser() {
 
 }
 
-
 function logOutUser(){
     $.ajax(
         {

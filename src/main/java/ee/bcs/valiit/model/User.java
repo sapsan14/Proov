@@ -4,6 +4,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
 
+import static ee.bcs.valiit.services.OmniMeterService.getStatsByUserId;
+
 public class User {
     private int id;
     private String firstName;
@@ -13,6 +15,7 @@ public class User {
     private String password;
     private String email;
     private String role;
+    private Stats stats;
 
 
     public User() {
@@ -28,6 +31,7 @@ public class User {
             this.setPersimissonsId(result.getString("role_id"));
             this.setDepartment(result.getString("department"));
             this.setEmail(result.getString("email"));
+            this.setStats(getStatsByUserId(getId()));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -108,5 +112,11 @@ public class User {
     }
 
 
+    public Stats getStats() {
+        return stats;
+    }
 
+    public void setStats(Stats stats) {
+        this.stats = stats;
+    }
 }

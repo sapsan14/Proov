@@ -258,11 +258,29 @@ public class OmniMeterService {
         }
 
         return null;
-
-
     }
 
-    public static List<Feedback> getFeedbackByUuid(String meeting_uuid) {
+    public static Stats getStatsByUserId(int user_id) {
+        String sql = "SELECT avg(feedback_form.feedback_points) as avg, meeting_owner_id from feedback_form \n" +
+                " join meeting on meeting.uuid = feedback_form.meeting_uuid \n" +
+                "where meeting.meeting_owner_id = " + user_id;
+        ResultSet result = executeSql(sql);
+        try {
+            if (result != null) {
+                if (result.next()) {
+                    Stats stats = new Stats(result);
+                    stats.setAverage(result.getFloat("avg"));
+                    return stats;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+        public static List<Feedback> getFeedbackByUuid(String meeting_uuid) {
         List<Feedback> feedbackWithComments = new ArrayList<>();
         try {
             String sql = "SELECT feedback_comments, feedback_points from feedback_form where meeting_uuid =" + "'" + meeting_uuid + "'";
