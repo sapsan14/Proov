@@ -31,7 +31,12 @@
             </li>
         </ul>
         <form class="form-inline my-2 my-lg-0">
-            <button class="btn btn-outline my-2 my-sm-0" type="submit" onclick="logOutUser()">Logout</button>
+            <button class="btn btn-outline my-2 my-sm-0" id="logoutbtn" type="submit" style="display: none;"
+                    onclick="logOutUser()">Logout
+            </button>
+            <button class="btn btn-outline my-2 my-sm-0" id="loginbtn" type="button" style="display: none"
+                    onclick="logIn()">Login
+            </button>
         </form>
     </div>
 </nav>
@@ -64,6 +69,38 @@
         Add User
     </button>
 </div>
+
+<div class="modal" id="loginModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Login</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <div class="row justify-content-center" id="errorBox" style="display: none;">
+                        <div class=col style="color: red; font-weight: bold">
+                            Logimine ebaõnnestus, proovi uuesti
+                        </div>
+                    </div>
+                    <span id="loginEmail" style="display: none; color: red">Required</span>
+                    <input type="text" id="email" class="form-control" placeholder="Email"/><br/>
+
+                    <span id="loginPassword" style="display: none; color: red">Required</span>
+                    <input type="password" id="password" class="form-control" placeholder="Password"/><br/>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" id="login" class="btn btn-primary" onclick="logInUser(postSuccessfulLoginActions)">Login</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!--button, mis avab popupi, kus on juba placeholderitega valikud täitmiseks.
 Modal-->
 <form id="form1" role="form" data-toggle="validator" onsubmit="return false">
@@ -150,13 +187,35 @@ Modal-->
     $(document).ready(
         function () {
             getAuthenticatedUser();
-            // initUiControls();
-            // Käivitame selle koodi siis, kui HTML dokument lõplikult laetud.
-            // $('#companies_list').append('Hello World');
-            giveAllUsers();
-            getAuthenticatedUserNavBar();
+            getAuthenticatedUserNavBar(giveAllUsers);
+
         }
     );
+
+    function checkIfLoggedIn(Userid) {
+        if (Userid == 0) {
+            console.log(Userid)
+            $('#loginbtn').show();
+            $('#logoutbtn').hide();
+        } else {
+            console.log("else")
+            $('#loginbtn').hide();
+            $('#logoutbtn').show();
+        }
+
+    }
+    function postSuccessfulLoginActions(){
+        getAuthenticatedUserNavBar(giveAllUsers());
+    }
+
+
+    function logIn(){
+        $('#email').val("") ;
+        $('#password').val("");
+        $('#errorBox').hide();
+        $('#loginModal').modal('show');
+    }
+
 
     function giveAllUsers() {
         //Teeme AJAX pärinug kasutajate pärimiseks Java EE rakendusest.
@@ -337,6 +396,14 @@ Modal-->
         var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         return re.test(String(email).toLowerCase());
     }
+
+    var input = document.getElementById("password");
+    input.addEventListener("keyup", function(event) {
+        event.preventDefault();
+        if (event.keyCode === 13) {
+            document.getElementById("login").click();
+        }
+    });
 
 
 </script>

@@ -21,7 +21,7 @@
         <div class="col-sm-4">
             <input type="text" id="email" class="form-control" placeholder="Email" required="true"><br/>
             <input type="password" id="password" class="form-control" placeholder="Password" required="true"><br/>
-            <button type="button" class="btn" onclick="logInUser();">Log In</button>
+            <button type="button" id="login" class="btn" onclick="logInUser();">Log In</button>
         </div>
     </div>
 
@@ -48,12 +48,19 @@
 
 <script>
 
+
     $(document).ready(
         function () {
             getAuthenticatedUser();
         }
     );
-
+    var input = document.getElementById("password");
+    input.addEventListener("keyup", function(event) {
+        event.preventDefault();
+        if (event.keyCode === 13) {
+            document.getElementById("login").click();
+        }
+    });
 
 
 

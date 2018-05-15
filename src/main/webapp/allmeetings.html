@@ -31,11 +31,47 @@
             </li>
         </ul>
         <form class="form-inline my-2 my-lg-0">
-            <button class="btn btn-outline my-2 my-sm-0" type="submit" onclick="logOutUser()">Logout</button>
+            <form class="form-inline my-2 my-lg-0">
+                <button class="btn btn-outline my-2 my-sm-0" id="logoutbtn" type="submit" style="display: none;"
+                        onclick="logOutUser()">Logout
+                </button>
+                <button class="btn btn-outline my-2 my-sm-0" id="loginbtn" type="button" style="display: none"
+                        onclick="logIn()">Login
+                </button>
+            </form>
         </form>
     </div>
 </nav>
+<div class="modal" id="loginModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Login</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <div class="row justify-content-center" id="errorBox" style="display: none;">
+                        <div class=col style="color: red; font-weight: bold">
+                            Logimine ebaõnnestus, proovi uuesti
+                        </div>
+                    </div>
+                    <span id="loginEmail" style="display: none; color: red">Required</span>
+                    <input type="text" id="email" class="form-control" placeholder="Email"/><br/>
 
+                    <span id="loginPassword" style="display: none; color: red">Required</span>
+                    <input type="password" id="password" class="form-control" placeholder="Password"/><br/>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" id="login" class="btn btn-primary" onclick="logInUser(postSuccessfulLoginActions)">Login</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="container">
     <h1>List of all meetings</h1>
@@ -80,12 +116,37 @@
     $(document).ready(
         function () {
             getAuthenticatedUser();
-            getAuthenticatedUserNavBar();
-            giveAllMeetingsAllUsers();
+            getAuthenticatedUserNavBar(giveAllMeetingsAllUsers);
 
 
         }
     );
+
+    function postSuccessfulLoginActions(){
+        getAuthenticatedUserNavBar(giveAllMeetingsAllUsers);
+    }
+
+    function checkIfLoggedIn(Userid) {
+        if (Userid == 0) {
+            console.log(Userid)
+            $('#loginbtn').show();
+            $('#logoutbtn').hide();
+        } else {
+            console.log("else")
+            $('#loginbtn').hide();
+            $('#logoutbtn').show();
+        }
+
+    }
+
+    function logIn() {
+        $('#email').val("");
+        $('#password').val("");
+        $('#errorBox').hide();
+        $('#loginModal').modal('show');
+    }
+
+
 
 
     function giveAllMeetingsAllUsers() {
@@ -124,6 +185,15 @@
             }
         )
     }
+
+    var input = document.getElementById("password");
+    input.addEventListener("keyup", function(event) {
+        event.preventDefault();
+        if (event.keyCode === 13) {
+            document.getElementById("login").click();
+        }
+    });
+
 
 </script>
 </html>

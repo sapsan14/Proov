@@ -1,4 +1,5 @@
-function logInUser() {
+function logInUser(successfulLoginCallback) {
+
     var email = $('#email').val();
     var password = $('#password').val();
 
@@ -13,8 +14,14 @@ function logInUser() {
             complete: function (result) {
                 //loginprosteduur lõpetanud
                 if (result.responseText == 'SUCCESS') {
-                    document.location = 'meeting.html';
-
+                    if(window.location.href.includes("login.html")){
+                        document.location = 'meeting.html';
+                    } else {
+                        if(successfulLoginCallback != null){
+                            successfulLoginCallback();
+                        }
+                    }
+                    $('#loginModal').modal('hide');
                 } else {
                     $('#errorBox').show();
                 }
@@ -62,7 +69,7 @@ function getAuthenticatedUser() {
     )
 }
 
-function getAuthenticatedUserNavBar() {
+function getAuthenticatedUserNavBar(completeCallbackFunction) {
     $.ajax(
         {
             url: "/rest/get_authenticated_user",
@@ -75,9 +82,12 @@ function getAuthenticatedUserNavBar() {
                     $('#users_box').show();
                     $('#all_meetings_box').show();
                 }
-                giveAllMeetings();
-                getVisitCount();
+                checkIfLoggedIn(authenticatedUser.id);
+                if (completeCallbackFunction != null) {
+                    completeCallbackFunction();
+                }
             }
         }
     );
 }
+

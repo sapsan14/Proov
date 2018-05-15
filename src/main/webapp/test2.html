@@ -3,8 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <title>Meetings</title>
-    <link rel="stylesheet" href="style/bootstrap.min.css"/>
-    <link rel="stylesheet" href="style/jquery-ui.css"/>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery-ui.js"></script>
+    <script src="js/auth.js"></script>
+
+    <script id="js">$(function() {
+
+        $("table").tablesorter({ theme : 'blue' });
+
+        $("#ajax-append").click(function() {
+
+            $.get("assets/ajax-content.html", function(html) {
+
+                // append the "ajax'd" data to the table body
+                $("table tbody").append(html);
+
+                // let the plugin know that we made a update
+                // the resort flag set to anything BUT false (no quotes) will trigger an automatic
+                // table resort using the current sort
+                var resort = true;
+                $("table").trigger("update", [resort]);
+
+                // triggering the "update" function will resort the table using the current sort; since version 2.0.14
+                // use the following code to change the sort; set sorting column and direction, this will sort on the first and third column
+                // var sorting = [[2,1],[0,0]];
+                // $("table").trigger("sorton", [sorting]);
+            });
+
+            return false;
+        });
+
+    });</script>
 
 </head>
 <body>
@@ -32,12 +62,7 @@
             </li>
         </ul>
         <form class="form-inline my-2 my-lg-0">
-            <button class="btn btn-outline my-2 my-sm-0" id="logoutbtn" type="submit" style="display: none;"
-                    onclick="logOutUser()">Logout
-            </button>
-            <button class="btn btn-outline my-2 my-sm-0" id="loginbtn" type="button" style="display: none"
-                    onclick="logIn()">Login
-            </button>
+            <button class="btn btn-outline my-2 my-sm-0" type="submit" onclick="logOutUser()">Logout</button>
         </form>
     </div>
 </nav>
@@ -50,7 +75,7 @@
         Visit count: <span id="visitCount">0</span>
     </div>
 
-    <table class="table">
+    <table class="tablesorter">
         <thead>
         <tr>
             <th>Meeting feedback Link</th>
@@ -67,10 +92,10 @@
 
 
         </tr>
-        </thead>
-        <tbody id="meetings_list">
 
+        <tbody id="meetings_list">
         </tbody>
+        <a href="#" id="ajax-append">Append new table data</a>
     </table>
     <!-- Button trigger modal -->
     <button type="button" class="btn btn-primary" onclick="prepareMeetingsAddingInterface()">
@@ -79,38 +104,6 @@
 </div>
 <!--button, mis avab popupi, kus on juba placeholderitega valikud täitmiseks.
 Modal-->
-
-<div class="modal" id="loginModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Login</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="container">
-                    <div class="row justify-content-center" id="errorBox" style="display: none;">
-                        <div class=col style="color: red; font-weight: bold">
-                            Logimine ebaõnnestus, proovi uuesti
-                        </div>
-                    </div>
-                    <span id="loginEmail" style="display: none; color: red">Required</span>
-                    <input type="text" id="email" class="form-control" placeholder="Email"/><br/>
-
-                    <span id="loginPassword" style="display: none; color: red">Required</span>
-                    <input type="password" id="password" class="form-control" placeholder="Password"/><br/>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" id="login" class="btn btn-primary" onclick="logInUser(postSuccessfulLoginActions)">Login</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 
 <div class="modal fade" id="meetingModal" tabindex="-1" role="dialog" aria-labelledby="meetingModalLabel"
      aria-hidden="true">
@@ -234,43 +227,21 @@ Modal-->
 </div>
 
 
-<script src="js/jquery.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
-<script src="js/jquery-ui.js"></script>
-<script src="js/auth.js"></script>
+
+
 
 <script>
-
-    var userId = 0;
-    var authenticatedUser = 0;
-
+    var userId = 2;
+    var authenticatedUser = 2;
 
     $(document).ready(
         function () {
-
             getAuthenticatedUser();
             initUiControls();
-            getAuthenticatedUserNavBar(giveAllMeetings);
-
+            getAuthenticatedUserNavBar();
         }
     );
 
-    function postSuccessfulLoginActions(){
-        getAuthenticatedUserNavBar(giveAllMeetings);
-    }
-
-    function checkIfLoggedIn(Userid) {
-        if (Userid == 0) {
-            console.log(Userid)
-            $('#loginbtn').show();
-            $('#logoutbtn').hide();
-        } else {
-            console.log("else")
-            $('#loginbtn').hide();
-            $('#logoutbtn').show();
-        }
-
-    }
 
     function isMeetingInfoValid() {
         var result = true;
@@ -317,12 +288,6 @@ Modal-->
         )
     }
 
-    function logIn() {
-        $('#email').val("");
-        $('#password').val("");
-        $('#errorBox').hide();
-        $('#loginModal').modal('show');
-    }
 
 
     function giveAllMeetings() {
@@ -338,6 +303,9 @@ Modal-->
                 complete: function (response) {
                     $('#meetings_list').empty();
                     var meetings = response.responseJSON;
+                    // $('#meetings_list').append("<table class=table table-bordered sortable id=meetings_list>");
+
+                    // $('#meetings_list').append("<tr><th>Meeting feedback Link</th><th>Subject</th><th>Details</th><th>Date</th><th>Time</th><th>Type</th><th>Average</th><th>Count</th><th></th><th></th><th></th></tr></thead>");
 
                     for (var i = 0; i < meetings.length; i++) {
 
@@ -360,6 +328,7 @@ Modal-->
                     }
                     // käivitatakse siis, kui päring on õnnestunud
 
+                    // $('#meetings_list').append("</table>");
                     console.log('Jep, the AJAX method works!')
                 }
             }
@@ -393,7 +362,6 @@ Modal-->
                 window.getSelection().addRange(range);
             }
         }
-
         var element = document.createElement('DIV');
         element.textContent = "http://localhost:8080/feedback.html?uuid=" + meetingUuid;
         document.body.appendChild(element);
@@ -585,15 +553,6 @@ Modal-->
             }
         );
     }
-
-    var input = document.getElementById("password");
-    input.addEventListener("keyup", function(event) {
-        event.preventDefault();
-        if (event.keyCode === 13) {
-            document.getElementById("login").click();
-        }
-    });
-
 
 
 </script>

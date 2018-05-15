@@ -119,4 +119,5 @@ public class User {
     public void setStats(Stats stats) {
         this.stats = stats;
     }
+
 }
