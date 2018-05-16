@@ -1,14 +1,12 @@
 package ee.bcs.valiit.rest;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import ee.bcs.valiit.model.*;
+import ee.bcs.valiit.services.AuthenticationService;
+import ee.bcs.valiit.services.CompanyService;
+import ee.bcs.valiit.services.FileService;
+import ee.bcs.valiit.services.OmniMeterService;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -17,11 +15,13 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
-
-import ee.bcs.valiit.model.*;
-import ee.bcs.valiit.services.AuthenticationService;
-import ee.bcs.valiit.services.CompanyService;
-import ee.bcs.valiit.services.OmniMeterService;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Path("/")
 public class RestResource {
@@ -220,24 +220,77 @@ public class RestResource {
     }
 
 
+//    @POST
+//    @Path("/add_company")
+//    @Consumes(MediaType.APPLICATION_JSON)
+//    @Produces(MediaType.TEXT_PLAIN)
+//    public String addCompany(Company company) {
+//
+//        CompanyService.addCompany(company);
+//        return "OK";
+//    }
+
     @POST
     @Path("/add_company")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.TEXT_PLAIN)
-    public String addCompany(Company company) {
+    @Consumes({ MediaType.MULTIPART_FORM_DATA })
+//	@Produces(MediaType.TEXT_PLAIN)
+    public String addCompany(
+            @FormDataParam("id") int id,
+            @FormDataParam("name") String name,
+            @FormDataParam("employeeCount") int employeeCount,
+            @FormDataParam("established") String established,
+            @FormDataParam("logo") InputStream logo,
+            @FormDataParam("logo") FormDataContentDisposition logoMetadata) {
+
+        String fileName = FileService.writeFileBytes(logo, logoMetadata);
+        Company company = new Company();
+        company.setName(name);
+        company.setEmployeeCount(employeeCount);
+        company.setEstablished(established);
+        company.setLogo(fileName);
 
         CompanyService.addCompany(company);
         return "OK";
     }
 
+
+    @GET
+    @Path("/get_companies")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Company> getCompanies(@Context HttpServletRequest req) {
+        if (isUserAuthorized(req, "admin") || isUserAuthorized(req, "user")) {
+            return CompanyService.getCompanies();
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
+
+
+
     @POST
     @Path("/modify_company")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.TEXT_PLAIN)
-    public String modifyCompany(Company company) {
+    @Consumes({ MediaType.MULTIPART_FORM_DATA })
+//	@Produces(MediaType.TEXT_PLAIN)
+    public String modifyCompany(@FormDataParam("id") int id,
+                                @FormDataParam("name") String name,
+                                @FormDataParam("employeeCount") int employeeCount,
+                                @FormDataParam("established") String established,
+                                @FormDataParam("logo") InputStream logo,
+                                @FormDataParam("logo") FormDataContentDisposition logoMetadata) {
+        String fileName = FileService.writeFileBytes(logo, logoMetadata);
+        Company company = new Company();
+        company.setId(id);
+        company.setName(name);
+        company.setEmployeeCount(employeeCount);
+        company.setEstablished(established);
+        if (fileName != null) {
+            company.setLogo(fileName);
+        }
         CompanyService.modifyCompany(company);
         return "OK";
     }
+
 
     @POST
     @Path("/delete_company")
@@ -359,4 +412,14 @@ public class RestResource {
         return VisitCounter.addVisit();
     }
 
+    @GET
+    @Path("/get_image")
+    @Produces("image/*")
+    public Response getImage(@QueryParam("file_name") String fileName) throws IOException {
+        byte[] imageBytes = FileService.readFileBytes(fileName);
+        return Response.ok(imageBytes).build();
+    }
+
 }
+
+

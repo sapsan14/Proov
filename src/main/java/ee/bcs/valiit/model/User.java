@@ -16,7 +16,7 @@ public class User {
     private String email;
     private String role;
     private Stats stats;
-
+    private String userUuid = UUID.randomUUID().toString();;
 
     public User() {
 
@@ -31,11 +31,22 @@ public class User {
             this.setPersimissonsId(result.getString("role_id"));
             this.setDepartment(result.getString("department"));
             this.setEmail(result.getString("email"));
+            this.setUserUuid(result.getString("user_uuid"));
             this.setStats(getStatsByUserId(getId()));
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
+    public String getUserUuid() {
+        return userUuid;
+    }
+
+    public void setUserUuid(String userUuid) {
+        this.userUuid = userUuid;
+    }
+
+
 
     public User(int id, String firstName, String lastName, String password, String persimissonsId, String department, String email) {
         this.id = id;

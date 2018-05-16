@@ -27,6 +27,8 @@
 
 	<dependencyManagement>
 		<dependencies>
+
+
 			<dependency>
 				<groupId>org.glassfish.jersey</groupId>
 				<artifactId>jersey-bom</artifactId>
@@ -38,6 +40,28 @@
 	</dependencyManagement>
 
 	<dependencies>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-email</artifactId>
+            <version>1.4</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>javax.mail-api</artifactId>
+            <version>1.5.5</version>
+        </dependency>
+
+
+        <dependency>
+            
+			<groupId>org.glassfish.jersey.media</groupId>
+            
+			<artifactId>jersey-media-multipart</artifactId>
+        
+		</dependency>
+
 		<dependency>
 			<groupId>org.glassfish.jersey.containers</groupId>
 			<artifactId>jersey-container-servlet-core</artifactId>

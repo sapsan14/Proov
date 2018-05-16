@@ -2,18 +2,47 @@ package ee.bcs.valiit.services;
 
 import ee.bcs.valiit.model.*;
 
-import javax.xml.stream.events.Comment;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.sql.*;
+import java.util.Properties;
 
 public class OmniMeterService {
 
-    public static final String SQL_CONNECTION_URL = "jdbc:mysql://localhost:3306/mydb";
-    public static final String SQL_USERNAME = "root";
-    public static final String SQL_PASSWORD = "tere";
+    private static Properties properties = null;
+
+    public static Properties getProperties() {
+        if (properties == null) {
+            properties = new Properties();
+            InputStream input = null;
+            try
+
+            {
+                ClassLoader classLoader = OmniMeterService.class.getClassLoader();
+                input = new FileInputStream(classLoader.getResource("config.properties").getFile());
+                properties.load(input);
+
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            } finally {
+                if (input != null) {
+                    try {
+                        input.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        return properties;
+    }
+
+    public static final String SQL_CONNECTION_URL ="jdbc:mysql://" + getProperties().getProperty("database");// "jdbc:mysql://localhost:3306/mydb";
+    public static final String SQL_USERNAME = getProperties().getProperty("dbuser");// "root";
+    public static final String SQL_PASSWORD = getProperties().getProperty("dbpassword");// "tere";
 
 
     public static ResultSet executeSql(String sql) {
@@ -147,33 +176,6 @@ public class OmniMeterService {
         return null;
     }
 
-//    public static Meeting getMeetingById(int meetingId) {
-//        try {
-//            String sql = "Select * from meeting where id =" + meetingId;
-//            ResultSet result = executeSql(sql);
-//            if (result != null) {
-//                if (result.next()) {
-//                    Meeting meeting = new Meeting();
-//                    meeting.setMeetingId(result.getInt("id"));
-//                    meeting.setOwnerId(result.getInt("meeting_owner_id"));
-//                    meeting.setType(result.getString("type"));
-//                    meeting.setUniqueHash(result.getString("uuid"));
-//                    meeting.setDate(result.getString("date"));
-//                    meeting.setTime(result.getString("time"));
-//                    meeting.setDetails(result.getString("details"));
-//                    meeting.setSubject(result.getString("subject"));
-//                    meeting.setMeetingHolder(getUser(meeting.getOwnerId()));
-//
-//                    return meeting;
-//                }
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//
-//        return null;
-//    }
-
     public static User getUser(int userId) {
         try {
             String sql = "Select * from user where id =" + userId;
@@ -199,7 +201,7 @@ public class OmniMeterService {
     }
 
     public static void deleteUser(int userId) {
-        String sql = "DELETE FROM user where id = " + userId  + " And role_id <> 'admin' ";
+        String sql = "DELETE FROM user where id = " + userId + " And role_id <> 'admin' ";
         executeSql(sql);
     }
 
@@ -280,7 +282,7 @@ public class OmniMeterService {
         return null;
     }
 
-        public static List<Feedback> getFeedbackByUuid(String meeting_uuid) {
+    public static List<Feedback> getFeedbackByUuid(String meeting_uuid) {
         List<Feedback> feedbackWithComments = new ArrayList<>();
         try {
             String sql = "SELECT feedback_comments, feedback_points from feedback_form where meeting_uuid =" + "'" + meeting_uuid + "'";
