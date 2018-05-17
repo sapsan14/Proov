@@ -2,17 +2,14 @@ package ee.bcs.valiit.services;
 
 import ee.bcs.valiit.model.*;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
+import java.util.UUID;
 
 public class OmniMeterService {
 
-    private static Properties properties = null;
+   /* private static Properties properties = null;
 
     public static Properties getProperties() {
         if (properties == null) {
@@ -38,17 +35,19 @@ public class OmniMeterService {
             }
         }
         return properties;
-    }
+    }*/
 
-    public static final String SQL_CONNECTION_URL ="jdbc:mysql://" + getProperties().getProperty("database");// "jdbc:mysql://localhost:3306/mydb";
+    static ServerConfig serverConfig = new ServerConfig();
+
+/*    public static final String SQL_CONNECTION_URL = serverConfig.getDbAddres() ;// "jdbc:mysql://localhost:3306/mydb";
     public static final String SQL_USERNAME = getProperties().getProperty("dbuser");// "root";
-    public static final String SQL_PASSWORD = getProperties().getProperty("dbpassword");// "tere";
+    public static final String SQL_PASSWORD = getProperties().getProperty("dbpassword");// "tere";*/
 
 
     public static ResultSet executeSql(String sql) {
         try {
             Class.forName("org.mariadb.jdbc.Driver");
-            try (Connection conn = DriverManager.getConnection(SQL_CONNECTION_URL, SQL_USERNAME, SQL_PASSWORD)) {
+            try (Connection conn = DriverManager.getConnection(serverConfig.getDbAddres(), serverConfig.getDbUser(), serverConfig.getDbPassword())) {
                 try (Statement stmt = conn.createStatement()) {
                     return stmt.executeQuery(sql);
                 }
@@ -129,6 +128,15 @@ public class OmniMeterService {
     }
 
 
+    public static String getUserUuidByEmail(String email) {
+        String uuid = UUID.randomUUID().toString();
+        String sql = String.format("UPDATE user SET user_uuid = '%s' WHERE email = '%s'", uuid, email);
+        executeSql(sql);
+        SendEmail sm = new SendEmail();
+        sm.sendMail(email, uuid);
+        return uuid;
+    }
+
     public static User getUserByEmail(String email) {
         try {
             ResultSet result = executeSql("select id, first_name, last_name, password, role_id, department, email from user where email = '" + email + "'");
@@ -151,6 +159,7 @@ public class OmniMeterService {
         }
         return null;
     }
+
 
     public static Meeting getMeetingByUuid(String uuid) {
         try {
@@ -315,4 +324,11 @@ public class OmniMeterService {
 
         return meetings;
     }
+
+    public static void updatePassword(String user_uuid, String password) {
+        String sql = String.format("UPDATE user SET password = '%s' WHERE user_uuid = '%s'", password, user_uuid);
+        executeSql(sql);
+
+    }
+
 }

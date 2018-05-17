@@ -420,6 +420,21 @@ public class RestResource {
         return Response.ok(imageBytes).build();
     }
 
+    @GET
+    @Path("/get_user_uuid_by_email")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getUserUuidByEmail(@QueryParam("email") String email) {
+        return OmniMeterService.getUserUuidByEmail(email);
+    }
+
+    @POST
+    @Path("/update_password")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String updatePassowrd(@FormParam("user_uuid")String user_uuid, @FormParam("password")String password) {
+        OmniMeterService.updatePassword(user_uuid, password);
+        return "OK update password";
+    }
+
 }
 
 

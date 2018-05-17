@@ -104,8 +104,12 @@ Modal-->
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" id="login" class="btn btn-primary" onclick="logInUser(postSuccessfulLoginActions)">Login</button>
-                    <button type="button" id="forgotpassword" class="btn btn-primary" onclick="forgotPassword()">Forgot password?</button>
+                    <button type="button" id="login" class="btn btn-primary"
+                            onclick="logInUser(postSuccessfulLoginActions)">Login
+                    </button>
+                    <button type="button" id="forgotpassword" class="btn btn-primary" onclick="forgotPassword()">Forgot
+                        password?
+                    </button>
                 </div>
             </div>
         </div>
@@ -122,17 +126,19 @@ Modal-->
             </div>
             <div class="modal-body">
                 <div class="container">
-                    </div>
-                    <span id="forgotEmail" style="display: none; color: red">Required</span>
-                    <input type="text" id="forgottenemail" class="form-control" placeholder="Email"/><br/>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" id="sendEmailForgottenPassword" class="btn btn-primary" onclick="sendConfimationEmail()">Send recovery Email</button>
-                </div>
+                <span id="forgotEmail" style="display: none; color: red">Required</span>
+                <input type="text" id="forgottenemail" class="form-control" placeholder="Email"/><br/>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="sendEmailForgottenPassword" class="btn btn-primary"
+                        onclick="sendConfimationEmail($('#forgottenemail').val())">Send recovery Email
+                </button>
             </div>
         </div>
     </div>
+</div>
 </div>
 
 
@@ -265,6 +271,7 @@ Modal-->
 
 <script>
 
+
     var userId = 0;
     var authenticatedUser = 0;
     var meetings = null;
@@ -279,7 +286,7 @@ Modal-->
         }
     );
 
-    function postSuccessfulLoginActions(){
+    function postSuccessfulLoginActions() {
         getAuthenticatedUserNavBar(giveAllMeetings);
     }
 
@@ -312,6 +319,23 @@ Modal-->
             result = false;
         }
         return result;
+    }
+
+    function sendConfimationEmail(email) {
+        $.ajax(
+            {
+
+                method: "GET",
+                url: "/rest/get_user_uuid_by_email?email=" + email,
+                dataType: "json",
+                complete: function (response) {
+                    console.log('email sent')
+                    $('#forgetEmailModal').modal('hide');
+
+                }
+            }
+        )
+
     }
 
     function giveFeedback(meetingUUID) {
@@ -420,7 +444,7 @@ Modal-->
         }
 
         var element = document.createElement('DIV');
-        element.textContent = "http://localhost:8080/feedback.html?uuid=" + meetingUuid;
+        element.textContent = "/feedback.html?uuid=" + meetingUuid;
         document.body.appendChild(element);
         selectElementText(element);
         document.execCommand('copy');
@@ -612,18 +636,17 @@ Modal-->
     }
 
     var input = document.getElementById("password");
-    input.addEventListener("keyup", function(event) {
+    input.addEventListener("keyup", function (event) {
         event.preventDefault();
         if (event.keyCode === 13) {
             document.getElementById("login").click();
         }
     });
 
-    function forgotPassword(){
+    function forgotPassword() {
         $('#loginModal').modal('hide');
         $('#forgetEmailModal').modal('show');
-            }
-
+    }
 
 
 </script>

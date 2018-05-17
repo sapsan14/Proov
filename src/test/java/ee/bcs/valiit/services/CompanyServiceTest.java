@@ -1,8 +1,5 @@
 package ee.bcs.valiit.services;
 
-import ee.bcs.valiit.model.SendEmail;
-import org.junit.Test;
-
 public class CompanyServiceTest {
 /*
     @Test
@@ -17,10 +14,12 @@ public class CompanyServiceTest {
 
     }*/
 
+/*
     @Test
     public void testEmailSending() {
         SendEmail sm = new SendEmail();
         sm.sendMail();
     }
+*/
 
 }
