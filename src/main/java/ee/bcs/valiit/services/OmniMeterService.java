@@ -62,8 +62,8 @@ public class OmniMeterService {
     public static void addUser(User user) {
         //salvestame ettevõtte andmebaasi
         if (userDoesntExist(user.getEmail())) {
-            String sql = "INSERT INTO user (first_name, last_name, password, role_id, department, email)" +
-                    " VALUES ('" + user.getFirstName() + "' , '" + user.getLastName() + "' , '" + user.getPassword() + "' , '" + user.getPersimissonsId() + "' , '" + user.getDepartment() + "' , '" + user.getEmail() + "')";
+            String sql = "INSERT INTO user (first_name, last_name, password, role_id, department, email, user_uuid)" +
+                    " VALUES ('" + user.getFirstName() + "' , '" + user.getLastName() + "' , '" + user.getPassword() + "' , '" + user.getPersimissonsId() + "' , '" + user.getDepartment() + "' , '" + user.getEmail() + "', '" + user.getUserUuid() + "')";
             executeSql(sql);
 
         }
@@ -133,7 +133,7 @@ public class OmniMeterService {
         String sql = String.format("UPDATE user SET user_uuid = '%s' WHERE email = '%s'", uuid, email);
         executeSql(sql);
         SendEmail sm = new SendEmail();
-        sm.sendMail(email, uuid);
+        sm.sendPasswordRecoveryMail(email, uuid);
         return uuid;
     }
 
@@ -312,7 +312,7 @@ public class OmniMeterService {
     public static List<Meeting> getMeetings(int meetingOwnerId) {
         List<Meeting> meetings = new ArrayList<Meeting>();
         try {
-            ResultSet result = executeSql("select * from meeting where meeting_owner_id =" + meetingOwnerId);
+            ResultSet result = executeSql("select * from meeting where meeting_owner_id =" + meetingOwnerId + " order by date desc");
             if (result != null) {
                 while (result.next()) {
                     meetings.add(new Meeting(result));
@@ -328,7 +328,34 @@ public class OmniMeterService {
     public static void updatePassword(String user_uuid, String password) {
         String sql = String.format("UPDATE user SET password = '%s' WHERE user_uuid = '%s'", password, user_uuid);
         executeSql(sql);
-
+        String sql1 = String.format("Select email from user where user_uuid = '%s'", user_uuid);
+        ResultSet result = executeSql(sql1);
+        String email = null;
+        try {
+            email = result.getString(0);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        String uuid = UUID.randomUUID().toString();
+        String sql2 = String.format("UPDATE user SET user_uuid = '%s' WHERE user_uuid = '%s'", uuid, user_uuid);
+        executeSql(sql2);
+        SendEmail updateEmail = new SendEmail();
+        updateEmail.passwordChangedConfirmationEmail(email);
     }
 
+    public static List<Department> getDepartments() {
+            List<Department> departments = new ArrayList<>();
+            try {
+                ResultSet result = executeSql("select * from department");
+                if (result != null) {
+                    while (result.next()) {
+                        departments.add(new Department(result));
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            return departments;
+        }
 }

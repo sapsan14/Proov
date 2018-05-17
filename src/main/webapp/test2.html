@@ -2,293 +2,536 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Meetings</title>
-    <script src="js/jquery.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/jquery-ui.js"></script>
-    <script src="js/auth.js"></script>
+    <title>TEST</title>
 
-    <script id="js">$(function() {
-
-        $("table").tablesorter({ theme : 'blue' });
-
-        $("#ajax-append").click(function() {
-
-            $.get("assets/ajax-content.html", function(html) {
-
-                // append the "ajax'd" data to the table body
-                $("table tbody").append(html);
-
-                // let the plugin know that we made a update
-                // the resort flag set to anything BUT false (no quotes) will trigger an automatic
-                // table resort using the current sort
-                var resort = true;
-                $("table").trigger("update", [resort]);
-
-                // triggering the "update" function will resort the table using the current sort; since version 2.0.14
-                // use the following code to change the sort; set sorting column and direction, this will sort on the first and third column
-                // var sorting = [[2,1],[0,0]];
-                // $("table").trigger("sorton", [sorting]);
-            });
-
-            return false;
-        });
-
-    });</script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/css/bootstrap.css"/>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap4.min.css"/>
 
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#"><span id="user_first_last_name"></span></a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="#"> <span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/meeting.html">Your Meetings</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" id="users_box" style="display: none;" href="/users.html">Users</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" id="all_meetings_box" style="display: none;" href="/allmeetings.html">All
-                    Meetings</a>
-            </li>
-        </ul>
-        <form class="form-inline my-2 my-lg-0">
-            <button class="btn btn-outline my-2 my-sm-0" type="submit" onclick="logOutUser()">Logout</button>
-        </form>
-    </div>
-</nav>
-
-<div class="container">
-    <h1>List of your meetings</h1>
-
-    <div class="row justify-content-center" : 250px>
-        <div style="color: grey; border: 1px solid grey; border-radius: 3px; border-padding: 5px"></div>
-        Visit count: <span id="visitCount">0</span>
-    </div>
-
-    <table class="tablesorter">
-        <thead>
-        <tr>
-            <th>Meeting feedback Link</th>
-            <th scope="col">Subject</th>
-            <th scope="col">Details</th>
-            <th scope="col">Date</th>
-            <th scope="col">Time</th>
-            <th scope="col">Type</th>
-            <th scope="col">Average</th>
-            <th scope="col">Count</th>
-            <th scope="col"></th>
-            <th scope="col"></th>
-            <th scope="col"></th>
+<table id="example" class="table table-striped table-bordered" style="width:100%">
+    <thead>
+    <tr>
+        <th>Meeting feedback Link</th>
+        <th scope="col">Subject</th>
+        <th scope="col">Details</th>
+        <th scope="col">Date</th>
+        <th scope="col">Time</th>
+        <th scope="col">Type</th>
+        <th scope="col">Average</th>
+        <th scope="col">Count</th>
+        <th scope="col"></th>
+        <th scope="col"></th>
+        <th scope="col"></th>
 
 
-        </tr>
+    </tr>
+    </thead>
 
-        <tbody id="meetings_list">
-        </tbody>
-        <a href="#" id="ajax-append">Append new table data</a>
-    </table>
-    <!-- Button trigger modal -->
-    <button type="button" class="btn btn-primary" onclick="prepareMeetingsAddingInterface()">
-        Add Meeting
-    </button>
-</div>
-<!--button, mis avab popupi, kus on juba placeholderitega valikud täitmiseks.
-Modal-->
+    <tbody id="meetings_list">
 
-<div class="modal fade" id="meetingModal" tabindex="-1" role="dialog" aria-labelledby="meetingModalLabel"
-     aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addMeeting">Meeting info</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-
-                <input type="hidden" id="meeting_id_field"/>
-                <input type="hidden" id="meeting_uuid_field"/><br/>
-
-                <span id="meetingSubjectRequired" style="display: none; color: red">Required</span>
-                <input type="text" id="meeting_subject_field" class="form-control " placeholder="subject"/><br/>
-
-                <span id="meetingDetailsRequired" style="display: none; color: red">Required</span>
-                <input type="text" id="meeting_details_field" class="form-control " placeholder="details"/><br/>
-
-                <span id="meetingDateRequired" style="display: none; color: red">Required</span>
-                <input type="text" id="meeting_date_field" class="form-control" readonly="readonly" placeholder="date"/><br/>
-
-                <div class="form-group ">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <label class="font-normal">
-                                Hour
-                            </label>
-                            <div class="input-group">
-                                <select id="hour_selection" data-placeholder=" Select hour..."
-                                        class="form-control chosen-select" style="width:350px;" tabindex="2">
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="font-normal">
-                                Minute
-                            </label>
-                            <div class="input-group">
-                                <select id="minute_selection" data-placeholder=" Select minute..."
-                                        class="form-control chosen-select" style="width:350px;" tabindex="2">
-                                    <option value="00">
-                                        00
-                                    </option>
-                                    <option value="15">
-                                        15
-                                    </option>
-                                    <option value="30">
-                                        30
-                                    </option>
-                                    <option value="45">
-                                        45
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="font-normal">
-                        Meeting type
-                    </label>
-                    <div class="input-group">
-
-                        <span id="meetingTypeRequired" style="display: none; color: red">Required</span><br/><br/>
-                        <select id="type_selection" data-placeholder=" Select type..."
-                                class="form-control chosen-select" style="width:350px;" tabindex="2">
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary" onclick="saveChanges()">Save
-                    changes
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="statModal" tabindex="-1" role="dialog" aria-labelledby="statModal"
-     aria-hidden="true" style="display: none;">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="statisticModal">Statistics about the meeting</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p>Average feedback for the meeting is:. <span id="meeting_avg"/></p>
-                <p>Average count for the meeting is:. <span id="meeting_count"/></p>
-
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th scope="col">Comments</th>
-                            <th scope="col">Grade</th>
-
-                        </tr>
-                        </thead>
-                        <tbody id="feedback_list">
-
-                        </tbody>
-                    </table>
-                </div>
-
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
+    </tbody>
 
 
+    <!---->
+    <!--<thead>-->
+    <!--<tr>-->
+        <!--<th>Name</th>-->
+        <!--<th>Position</th>-->
+        <!--<th>Office</th>-->
+        <!--<th>Age</th>-->
+        <!--<th>Start date</th>-->
+        <!--<th>Salary</th>-->
+    <!--</tr>-->
+    <!--</thead>-->
+    <!--<tbody>-->
+    <!--<tr>-->
+        <!--<td>Tiger Nixon</td>-->
+        <!--<td>System Architect</td>-->
+        <!--<td>Edinburgh</td>-->
+        <!--<td>61</td>-->
+        <!--<td>2011/04/25</td>-->
+        <!--<td>$320,800</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Garrett Winters</td>-->
+        <!--<td>Accountant</td>-->
+        <!--<td>Tokyo</td>-->
+        <!--<td>63</td>-->
+        <!--<td>2011/07/25</td>-->
+        <!--<td>$170,750</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Ashton Cox</td>-->
+        <!--<td>Junior Technical Author</td>-->
+        <!--<td>San Francisco</td>-->
+        <!--<td>66</td>-->
+        <!--<td>2009/01/12</td>-->
+        <!--<td>$86,000</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Cedric Kelly</td>-->
+        <!--<td>Senior Javascript Developer</td>-->
+        <!--<td>Edinburgh</td>-->
+        <!--<td>22</td>-->
+        <!--<td>2012/03/29</td>-->
+        <!--<td>$433,060</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Airi Satou</td>-->
+        <!--<td>Accountant</td>-->
+        <!--<td>Tokyo</td>-->
+        <!--<td>33</td>-->
+        <!--<td>2008/11/28</td>-->
+        <!--<td>$162,700</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Brielle Williamson</td>-->
+        <!--<td>Integration Specialist</td>-->
+        <!--<td>New York</td>-->
+        <!--<td>61</td>-->
+        <!--<td>2012/12/02</td>-->
+        <!--<td>$372,000</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Herrod Chandler</td>-->
+        <!--<td>Sales Assistant</td>-->
+        <!--<td>San Francisco</td>-->
+        <!--<td>59</td>-->
+        <!--<td>2012/08/06</td>-->
+        <!--<td>$137,500</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Rhona Davidson</td>-->
+        <!--<td>Integration Specialist</td>-->
+        <!--<td>Tokyo</td>-->
+        <!--<td>55</td>-->
+        <!--<td>2010/10/14</td>-->
+        <!--<td>$327,900</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Colleen Hurst</td>-->
+        <!--<td>Javascript Developer</td>-->
+        <!--<td>San Francisco</td>-->
+        <!--<td>39</td>-->
+        <!--<td>2009/09/15</td>-->
+        <!--<td>$205,500</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Sonya Frost</td>-->
+        <!--<td>Software Engineer</td>-->
+        <!--<td>Edinburgh</td>-->
+        <!--<td>23</td>-->
+        <!--<td>2008/12/13</td>-->
+        <!--<td>$103,600</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Jena Gaines</td>-->
+        <!--<td>Office Manager</td>-->
+        <!--<td>London</td>-->
+        <!--<td>30</td>-->
+        <!--<td>2008/12/19</td>-->
+        <!--<td>$90,560</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Quinn Flynn</td>-->
+        <!--<td>Support Lead</td>-->
+        <!--<td>Edinburgh</td>-->
+        <!--<td>22</td>-->
+        <!--<td>2013/03/03</td>-->
+        <!--<td>$342,000</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Charde Marshall</td>-->
+        <!--<td>Regional Director</td>-->
+        <!--<td>San Francisco</td>-->
+        <!--<td>36</td>-->
+        <!--<td>2008/10/16</td>-->
+        <!--<td>$470,600</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Haley Kennedy</td>-->
+        <!--<td>Senior Marketing Designer</td>-->
+        <!--<td>London</td>-->
+        <!--<td>43</td>-->
+        <!--<td>2012/12/18</td>-->
+        <!--<td>$313,500</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Tatyana Fitzpatrick</td>-->
+        <!--<td>Regional Director</td>-->
+        <!--<td>London</td>-->
+        <!--<td>19</td>-->
+        <!--<td>2010/03/17</td>-->
+        <!--<td>$385,750</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Michael Silva</td>-->
+        <!--<td>Marketing Designer</td>-->
+        <!--<td>London</td>-->
+        <!--<td>66</td>-->
+        <!--<td>2012/11/27</td>-->
+        <!--<td>$198,500</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Paul Byrd</td>-->
+        <!--<td>Chief Financial Officer (CFO)</td>-->
+        <!--<td>New York</td>-->
+        <!--<td>64</td>-->
+        <!--<td>2010/06/09</td>-->
+        <!--<td>$725,000</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Gloria Little</td>-->
+        <!--<td>Systems Administrator</td>-->
+        <!--<td>New York</td>-->
+        <!--<td>59</td>-->
+        <!--<td>2009/04/10</td>-->
+        <!--<td>$237,500</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Bradley Greer</td>-->
+        <!--<td>Software Engineer</td>-->
+        <!--<td>London</td>-->
+        <!--<td>41</td>-->
+        <!--<td>2012/10/13</td>-->
+        <!--<td>$132,000</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Dai Rios</td>-->
+        <!--<td>Personnel Lead</td>-->
+        <!--<td>Edinburgh</td>-->
+        <!--<td>35</td>-->
+        <!--<td>2012/09/26</td>-->
+        <!--<td>$217,500</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Jenette Caldwell</td>-->
+        <!--<td>Development Lead</td>-->
+        <!--<td>New York</td>-->
+        <!--<td>30</td>-->
+        <!--<td>2011/09/03</td>-->
+        <!--<td>$345,000</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Yuri Berry</td>-->
+        <!--<td>Chief Marketing Officer (CMO)</td>-->
+        <!--<td>New York</td>-->
+        <!--<td>40</td>-->
+        <!--<td>2009/06/25</td>-->
+        <!--<td>$675,000</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Caesar Vance</td>-->
+        <!--<td>Pre-Sales Support</td>-->
+        <!--<td>New York</td>-->
+        <!--<td>21</td>-->
+        <!--<td>2011/12/12</td>-->
+        <!--<td>$106,450</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Doris Wilder</td>-->
+        <!--<td>Sales Assistant</td>-->
+        <!--<td>Sidney</td>-->
+        <!--<td>23</td>-->
+        <!--<td>2010/09/20</td>-->
+        <!--<td>$85,600</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Angelica Ramos</td>-->
+        <!--<td>Chief Executive Officer (CEO)</td>-->
+        <!--<td>London</td>-->
+        <!--<td>47</td>-->
+        <!--<td>2009/10/09</td>-->
+        <!--<td>$1,200,000</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Gavin Joyce</td>-->
+        <!--<td>Developer</td>-->
+        <!--<td>Edinburgh</td>-->
+        <!--<td>42</td>-->
+        <!--<td>2010/12/22</td>-->
+        <!--<td>$92,575</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Jennifer Chang</td>-->
+        <!--<td>Regional Director</td>-->
+        <!--<td>Singapore</td>-->
+        <!--<td>28</td>-->
+        <!--<td>2010/11/14</td>-->
+        <!--<td>$357,650</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Brenden Wagner</td>-->
+        <!--<td>Software Engineer</td>-->
+        <!--<td>San Francisco</td>-->
+        <!--<td>28</td>-->
+        <!--<td>2011/06/07</td>-->
+        <!--<td>$206,850</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Fiona Green</td>-->
+        <!--<td>Chief Operating Officer (COO)</td>-->
+        <!--<td>San Francisco</td>-->
+        <!--<td>48</td>-->
+        <!--<td>2010/03/11</td>-->
+        <!--<td>$850,000</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Shou Itou</td>-->
+        <!--<td>Regional Marketing</td>-->
+        <!--<td>Tokyo</td>-->
+        <!--<td>20</td>-->
+        <!--<td>2011/08/14</td>-->
+        <!--<td>$163,000</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Michelle House</td>-->
+        <!--<td>Integration Specialist</td>-->
+        <!--<td>Sidney</td>-->
+        <!--<td>37</td>-->
+        <!--<td>2011/06/02</td>-->
+        <!--<td>$95,400</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Suki Burks</td>-->
+        <!--<td>Developer</td>-->
+        <!--<td>London</td>-->
+        <!--<td>53</td>-->
+        <!--<td>2009/10/22</td>-->
+        <!--<td>$114,500</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Prescott Bartlett</td>-->
+        <!--<td>Technical Author</td>-->
+        <!--<td>London</td>-->
+        <!--<td>27</td>-->
+        <!--<td>2011/05/07</td>-->
+        <!--<td>$145,000</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Gavin Cortez</td>-->
+        <!--<td>Team Leader</td>-->
+        <!--<td>San Francisco</td>-->
+        <!--<td>22</td>-->
+        <!--<td>2008/10/26</td>-->
+        <!--<td>$235,500</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Martena Mccray</td>-->
+        <!--<td>Post-Sales support</td>-->
+        <!--<td>Edinburgh</td>-->
+        <!--<td>46</td>-->
+        <!--<td>2011/03/09</td>-->
+        <!--<td>$324,050</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Unity Butler</td>-->
+        <!--<td>Marketing Designer</td>-->
+        <!--<td>San Francisco</td>-->
+        <!--<td>47</td>-->
+        <!--<td>2009/12/09</td>-->
+        <!--<td>$85,675</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Howard Hatfield</td>-->
+        <!--<td>Office Manager</td>-->
+        <!--<td>San Francisco</td>-->
+        <!--<td>51</td>-->
+        <!--<td>2008/12/16</td>-->
+        <!--<td>$164,500</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Hope Fuentes</td>-->
+        <!--<td>Secretary</td>-->
+        <!--<td>San Francisco</td>-->
+        <!--<td>41</td>-->
+        <!--<td>2010/02/12</td>-->
+        <!--<td>$109,850</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Vivian Harrell</td>-->
+        <!--<td>Financial Controller</td>-->
+        <!--<td>San Francisco</td>-->
+        <!--<td>62</td>-->
+        <!--<td>2009/02/14</td>-->
+        <!--<td>$452,500</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Timothy Mooney</td>-->
+        <!--<td>Office Manager</td>-->
+        <!--<td>London</td>-->
+        <!--<td>37</td>-->
+        <!--<td>2008/12/11</td>-->
+        <!--<td>$136,200</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Jackson Bradshaw</td>-->
+        <!--<td>Director</td>-->
+        <!--<td>New York</td>-->
+        <!--<td>65</td>-->
+        <!--<td>2008/09/26</td>-->
+        <!--<td>$645,750</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Olivia Liang</td>-->
+        <!--<td>Support Engineer</td>-->
+        <!--<td>Singapore</td>-->
+        <!--<td>64</td>-->
+        <!--<td>2011/02/03</td>-->
+        <!--<td>$234,500</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Bruno Nash</td>-->
+        <!--<td>Software Engineer</td>-->
+        <!--<td>London</td>-->
+        <!--<td>38</td>-->
+        <!--<td>2011/05/03</td>-->
+        <!--<td>$163,500</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Sakura Yamamoto</td>-->
+        <!--<td>Support Engineer</td>-->
+        <!--<td>Tokyo</td>-->
+        <!--<td>37</td>-->
+        <!--<td>2009/08/19</td>-->
+        <!--<td>$139,575</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Thor Walton</td>-->
+        <!--<td>Developer</td>-->
+        <!--<td>New York</td>-->
+        <!--<td>61</td>-->
+        <!--<td>2013/08/11</td>-->
+        <!--<td>$98,540</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Finn Camacho</td>-->
+        <!--<td>Support Engineer</td>-->
+        <!--<td>San Francisco</td>-->
+        <!--<td>47</td>-->
+        <!--<td>2009/07/07</td>-->
+        <!--<td>$87,500</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Serge Baldwin</td>-->
+        <!--<td>Data Coordinator</td>-->
+        <!--<td>Singapore</td>-->
+        <!--<td>64</td>-->
+        <!--<td>2012/04/09</td>-->
+        <!--<td>$138,575</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Zenaida Frank</td>-->
+        <!--<td>Software Engineer</td>-->
+        <!--<td>New York</td>-->
+        <!--<td>63</td>-->
+        <!--<td>2010/01/04</td>-->
+        <!--<td>$125,250</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Zorita Serrano</td>-->
+        <!--<td>Software Engineer</td>-->
+        <!--<td>San Francisco</td>-->
+        <!--<td>56</td>-->
+        <!--<td>2012/06/01</td>-->
+        <!--<td>$115,000</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Jennifer Acosta</td>-->
+        <!--<td>Junior Javascript Developer</td>-->
+        <!--<td>Edinburgh</td>-->
+        <!--<td>43</td>-->
+        <!--<td>2013/02/01</td>-->
+        <!--<td>$75,650</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Cara Stevens</td>-->
+        <!--<td>Sales Assistant</td>-->
+        <!--<td>New York</td>-->
+        <!--<td>46</td>-->
+        <!--<td>2011/12/06</td>-->
+        <!--<td>$145,600</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Hermione Butler</td>-->
+        <!--<td>Regional Director</td>-->
+        <!--<td>London</td>-->
+        <!--<td>47</td>-->
+        <!--<td>2011/03/21</td>-->
+        <!--<td>$356,250</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Lael Greer</td>-->
+        <!--<td>Systems Administrator</td>-->
+        <!--<td>London</td>-->
+        <!--<td>21</td>-->
+        <!--<td>2009/02/27</td>-->
+        <!--<td>$103,500</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Jonas Alexander</td>-->
+        <!--<td>Developer</td>-->
+        <!--<td>San Francisco</td>-->
+        <!--<td>30</td>-->
+        <!--<td>2010/07/14</td>-->
+        <!--<td>$86,500</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Shad Decker</td>-->
+        <!--<td>Regional Director</td>-->
+        <!--<td>Edinburgh</td>-->
+        <!--<td>51</td>-->
+        <!--<td>2008/11/13</td>-->
+        <!--<td>$183,000</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Michael Bruce</td>-->
+        <!--<td>Javascript Developer</td>-->
+        <!--<td>Singapore</td>-->
+        <!--<td>29</td>-->
+        <!--<td>2011/06/27</td>-->
+        <!--<td>$183,000</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<td>Donna Snider</td>-->
+        <!--<td>Customer Support</td>-->
+        <!--<td>New York</td>-->
+        <!--<td>27</td>-->
+        <!--<td>2011/01/25</td>-->
+        <!--<td>$112,000</td>-->
+    <!--</tr>-->
+    <!--</tbody>-->
+    <!--<tfoot>-->
+    <!--<tr>-->
+        <!--<th>Name</th>-->
+        <!--<th>Position</th>-->
+        <!--<th>Office</th>-->
+        <!--<th>Age</th>-->
+        <!--<th>Start date</th>-->
+        <!--<th>Salary</th>-->
+    <!--</tr>-->
+    <!--</tfoot>-->
+</table>
 
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/jquery-ui.js"></script>
+<script src="js/auth.js"></script>
 
+<!--<script src="https://code.jquery.com/jquery-1.12.4.js"></script>-->
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<!--<script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js"></script>-->
 
 <script>
-    var userId = 2;
-    var authenticatedUser = 2;
+    $(document).ready(function() {
 
-    $(document).ready(
-        function () {
-            getAuthenticatedUser();
-            initUiControls();
-            getAuthenticatedUserNavBar();
-        }
-    );
+        // $('#example').DataTable();
+        giveAllMeetings();
 
-
-    function isMeetingInfoValid() {
-        var result = true;
-        if ($('#meeting_subject_field').val() == "") {
-            $("#meetingSubjectRequired").show();
-            result = false;
-        } else if ($('#meeting_details_field').val() == "") {
-            $("#meetingDetailsRequired").show();
-            result = false;
-        } else if ($('#type_selection').val() == null) {
-            $("#meetingTypeRequired").show();
-            result = false;
-        } else if ($('#meeting_date_field').val() == "") {
-            $("#meetingDateRequired").show();
-            result = false;
-        }
-        return result;
-    }
-
-    function giveFeedback(meetingUUID) {
-        //Teeme AJAX pärinug kohtumiste nimekirje pärimiseks Java EE rakendusest.
-
-        $.ajax(
-            {
-
-                method: "GET",
-                url: "/rest/get_meeting_feedback_by_uuid?meeting_uuid=" + meetingUUID,
-                dataType: "json",
-
-                complete: function (response) {
-                    $('#feedback_list').empty();
-                    var feedback = response.responseJSON;
-                    for (var i = 0; i < feedback.length; i++) {
-                        var feedBackRow = "<tr>";
-                        feedBackRow = feedBackRow + "<td>" + feedback[i].comment + "</td>";
-                        feedBackRow = feedBackRow + "<td>" + feedback[i].grade + "</td>";
-
-                        $('#feedback_list').append(feedBackRow);
-                    }
-                    // käivitatakse siis, kui päring on õnnestunud
-                    console.log('Jep, the AJAX method works!')
-                }
-            }
-        )
-    }
-
-
+        var newTableObject = document.getElementById('example').innerHTML;
+        newTableObject.DataTable();
+    })
 
     function giveAllMeetings() {
         //Teeme AJAX pärinug kohtumiste nimekirje pärimiseks Java EE rakendusest.
@@ -297,18 +540,29 @@ Modal-->
             {
 
                 method: "GET",
-                url: "/rest/get_meetings?meeting_owner_id=" + userId,
+                url: "/rest/get_meetings?meeting_owner_id=" + 2,
                 dataType: "json",
 
                 complete: function (response) {
-                    $('#meetings_list').empty();
-                    var meetings = response.responseJSON;
-                    // $('#meetings_list').append("<table class=table table-bordered sortable id=meetings_list>");
-
-                    // $('#meetings_list').append("<tr><th>Meeting feedback Link</th><th>Subject</th><th>Details</th><th>Date</th><th>Time</th><th>Type</th><th>Average</th><th>Count</th><th></th><th></th><th></th></tr></thead>");
+                   $('#meetings_list').empty();
+                    meetings = response.responseJSON;
 
                     for (var i = 0; i < meetings.length; i++) {
 
+   /*                     meetingDataArraLenght = meetingData['data'].length;
+                        meetingData['data'][meetingDataArraLenght] = [
+                            'feedback link',
+                            meetings[i].subject,
+                            meetings[i].details,
+                            meetings[i].date,
+                            meetings[i].time,
+                            meetings[i].type,
+                            meetings[i].meetingStats.average,
+                            meetings[i].meetingStats.count,
+                            'BUTTON',
+                            'BUTTON',
+                            'BUTTON'
+                        ];*/
 
                         var meetingRow = "<tr>";
                         meetingRow = meetingRow + '<td><button class="btn btn-sm" onclick="copyLink(' + '&quot;' + meetings[i].uniqueHash + '&quot;' + ');">Feedback link</button></td>';
@@ -327,234 +581,17 @@ Modal-->
 
                     }
                     // käivitatakse siis, kui päring on õnnestunud
+                    // newTableObject = document.getElementById('myTable');
+                    // sorttable.makeSortable(newTableObject);
 
-                    // $('#meetings_list').append("</table>");
                     console.log('Jep, the AJAX method works!')
                 }
             }
+
         )
     }
 
-    function prepareMeetingsAddingInterface(meetingUuid) {
-        $('#meeting_uuid_field').val("");
-        $('#meeting_subject_field').val("");
-        $('#meeting_details_field').val("");
-        $('#meeting_date_field').val("");
-        $('#meeting_time_field').val("");
-        $('#type_selection').val("");
-        $("#meetingSubjectRequired").hide();
-        $("#meetingDetailsRequired").hide();
-        $("#meetingTypeRequired").hide();
-        $("#meetingDateRequired").hide();
-        $('#meetingModal').modal('show');
-    }
-
-    function copyLink(meetingUuid) {
-        function selectElementText(element) {
-            if (document.selection) {
-                var range = document.body.createTextRange();
-                range.moveToElementText(element);
-                range.select();
-            } else if (window.getSelection) {
-                var range = document.createRange();
-                range.selectNode(element);
-                window.getSelection().removeAllRanges();
-                window.getSelection().addRange(range);
-            }
-        }
-        var element = document.createElement('DIV');
-        element.textContent = "http://localhost:8080/feedback.html?uuid=" + meetingUuid;
-        document.body.appendChild(element);
-        selectElementText(element);
-        document.execCommand('copy');
-        alert("Feedback link copied: " + element.textContent);
-        element.remove();
-    }
-
-
-    function prepareMeetingStats(meetingUuid) {
-        $.ajax(
-            {
-                method: "GET",
-                url: "/rest/get_meeting_stats_by_uuid?meeting_uuid=" + meetingUuid,
-                dataType: "json",
-                contenType: 'application/json',
-                complete: function (response) {
-                    var stats = response.responseJSON;
-                    $('#meeting_avg').html(stats.average);
-                    $('#meeting_count').html(stats.count);
-                    giveFeedback(meetingUuid);
-                    $('#statModal').modal('show');
-
-                }
-
-            }
-        );
-    }
-
-
-    function saveChanges() {
-        if (isMeetingInfoValid()) {
-            var saveUrl = "";
-            if ($('#meeting_uuid_field').val() != "") {
-                saveUrl = "/rest/modify_meeting";
-            } else {
-                saveUrl = "/rest/add_meeting";
-            }
-
-            var jsonObject = null;
-
-            if ($('#meeting_uuid_field').val() != "") {
-                jsonObject = {
-                    ownerId: userId,
-                    uniqueHash: $('#meeting_uuid_field').val(),
-                    subject: $('#meeting_subject_field').val(),
-                    details: $('#meeting_details_field').val(),
-                    date: $('#meeting_date_field').val(),
-                    type: $('#type_selection').val(),
-                    time: $('#hour_selection').val() + ":" + $('#minute_selection').val()
-                };
-            } else {
-                jsonObject = {
-                    ownerId: userId,
-                    subject: $('#meeting_subject_field').val(),
-                    details: $('#meeting_details_field').val(),
-                    date: $('#meeting_date_field').val(),
-                    type: $('#type_selection').val(),
-                    time: $('#hour_selection').val() + ":" + $('#minute_selection').val()
-
-                };
-            }
-
-            $.ajax(
-                {
-                    method: "POST",
-                    url: saveUrl,
-                    dataType: "json",
-                    contentType: 'application/json',
-                    data: JSON.stringify(jsonObject),
-                    complete: function (response) {
-                        $('#meetingModal').modal('hide');
-                        giveAllMeetings();
-                    }
-                }
-            )
-        }
-    }
-
-
-    function deleteMeeting(meetingUuid) {
-        if (confirm("Are you sure, you want to delete the meeting?")) {
-            $.ajax(
-                {
-                    method: "POST",
-                    url: "/rest/delete_meeting",
-                    data: {
-                        "uuid": meetingUuid
-                    },
-                    complete: function (response) {
-                        giveAllMeetings();
-                    }
-                }
-            );
-        }
-    }
-
-    function editMeeting(meetingUuid) {
-        $.ajax(
-            {
-                method: "GET",
-                url: "/rest/get_meeting_by_uuid?meeting_uuid=" + meetingUuid,
-                dataType: "json",
-                contenType: 'application/json',
-                complete: function (response) {
-                    var meeting = response.responseJSON;
-                    $('#meeting_uuid_field').val(meeting.uniqueHash);
-                    $('#meeting_subject_field').val(meeting.subject);
-                    $('#meeting_details_field').val(meeting.details);
-                    $('#meeting_date_field').val(meeting.date);
-                    $('#meeting_time_field').val(meeting.time);
-                    $('#type_selection').val(meeting.type);
-                    $("#meetingSubjectRequired").hide();
-                    $("#meetingDetailsRequired").hide();
-                    $("#meetingTypeRequired").hide();
-                    $("#meetingDateRequired").hide();
-                    $('#meetingModal').modal('show');
-                }
-
-            }
-        );
-    }
-
-    function initUiControls() {
-
-        $('#meeting_date_field').datepicker(
-            {
-                dateFormat: 'yy-mm-dd',
-                showButtonPanel: true,
-                changeMonth: true,
-                changeYear: true,
-                showOtherMonths: true,
-                selectOtherMonths: true,
-                yearRange: "-300:+0"
-            }
-        );
-
-
-        $.ajax(
-            {
-                method: "GET",
-                url: "/rest/get_meeting_types",
-                complete: function (response) {
-                    console.log(response.responseJSON);
-                    var meetingTypes = response.responseJSON;
-                    $('#type_selection').empty();
-                    for (var i = 0; i < meetingTypes.length; i++) {
-                        $('#type_selection').append('<option value="' + meetingTypes[i].type + '">' + meetingTypes[i].type + '</option>');
-                    }
-
-                }
-            }
-        );
-
-        $.ajax({
-                complete: function addHours() {
-                    for (var i = 1; i <= 24; i++) {
-                        $('#hour_selection').append('<option value="' + i + '">' + i + '</option>');
-                    }
-                }
-            }
-        );
-
-
-        /*                  $('#meeting_time').timepicker(
-                              {
-                                  dateFormat: 'yy-mm-dd',
-                                  showButtonPanel: true,
-                                  changeMonth: true,
-                                  changeYear: true,
-                                  showOtherMonths: true,
-                                  selectOtherMonths: true,
-                                  yearRange: "-300:+0"
-                              }
-                          );*/
-    }
-
-
-    function getVisitCount() {
-        $.ajax(
-            {
-                url: "/rest/register_visit",
-                method: "GET",
-                complete: function (result) {
-                    $('#visitCount').html(result.responseText);
-
-                }
-            }
-        );
-    }
-
-
 </script>
+
 </body>
 </html>

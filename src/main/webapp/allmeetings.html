@@ -67,12 +67,38 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     <button type="button" id="login" class="btn btn-primary" onclick="logInUser(postSuccessfulLoginActions)">Login</button>
+                    <button type="button" id="forgotpassword" class="btn btn-primary" onclick="forgotPassword()">Forgot
+                        password?
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
+<div class="modal" id="forgetEmailModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Login</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                </div>
+                <span id="forgotEmail" style="display: none; color: red">Required</span>
+                <input type="text" id="forgottenemail" class="form-control" placeholder="Email"/><br/>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="sendEmailForgottenPassword" class="btn btn-primary"
+                        onclick="sendConfimationEmail($('#forgottenemail').val())">Send recovery Email
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="container">
     <h1>List of all meetings</h1>
 
@@ -193,6 +219,29 @@
             document.getElementById("login").click();
         }
     });
+
+    function forgotPassword() {
+        $('#loginModal').modal('hide');
+        $('#forgetEmailModal').modal('show');
+    }
+
+    function sendConfimationEmail(email) {
+        $.ajax(
+            {
+
+                method: "GET",
+                url: "/rest/get_user_uuid_by_email?email=" + email,
+                dataType: "json",
+                complete: function (response) {
+                    console.log('email sent')
+                    $('#forgetEmailModal').modal('hide');
+
+                }
+            }
+        )
+
+    }
+
 
 
 </script>

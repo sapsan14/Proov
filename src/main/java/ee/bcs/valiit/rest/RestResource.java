@@ -109,6 +109,13 @@ public class RestResource {
         return OmniMeterService.getMeetingTypes();
     }
 
+    @GET
+    @Path("/get_departments")
+    @Produces(MediaType.APPLICATION_JSON) // anname välja formaadis APPLICATION_JSON
+    public List<Department> getDepartments() {
+        return OmniMeterService.getDepartments();
+    }
+
 
     @POST
     @Path("/add_user")
@@ -430,7 +437,7 @@ public class RestResource {
     @POST
     @Path("/update_password")
     @Produces(MediaType.TEXT_PLAIN)
-    public String updatePassowrd(@FormParam("user_uuid")String user_uuid, @FormParam("password")String password) {
+    public String updatePassword(@FormParam("user_uuid")String user_uuid, @FormParam("password")String password) {
         OmniMeterService.updatePassword(user_uuid, password);
         return "OK update password";
     }

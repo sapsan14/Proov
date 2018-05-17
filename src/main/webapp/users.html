@@ -95,12 +95,36 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     <button type="button" id="login" class="btn btn-primary" onclick="logInUser(postSuccessfulLoginActions)">Login</button>
+                    <button type="button" id="forgotpassword" class="btn btn-primary" onclick="forgotPassword()">Forgot password?</button>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
+<div class="modal" id="forgetEmailModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Login</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                </div>
+                <span id="forgotEmail" style="display: none; color: red">Required</span>
+                <input type="text" id="forgottenemail" class="form-control" placeholder="Email"/><br/>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="sendEmailForgottenPassword" class="btn btn-primary"
+                        onclick="sendConfimationEmail($('#forgottenemail').val())">Send recovery Email
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 <!--button, mis avab popupi, kus on juba placeholderitega valikud täitmiseks.
 Modal-->
 <form id="form1" role="form" data-toggle="validator" onsubmit="return false">
@@ -129,7 +153,7 @@ Modal-->
                                placeholder="Last Name" required="true"><br/>
 
                         <span id="userpasswordRequiredBox" style="display: none; color: red">Required</span>
-                        <input type="text" id="user_password_textbox" class="form-control" name="password"
+                        <input type="password" id="user_password_textbox" class="form-control" name="password"
                                placeholder="Password"/><br/>
 
 
@@ -157,9 +181,17 @@ Modal-->
                     </div>
 
                     <br/>
-                    <span id="userDepartmentRequiredBox" style="display: none; color: red">Required</span>
+                    <label class="font-normal">
+                        Department
+                    </label>
+                    <div class="input-group">
+                        <br/>
+                        <span id="userDepartmentRequiredBox" style="display: none; color: red">Required</span><br/>
+                        <select id="department_selection" data-placeholder=" Select department..."
+                                class="form-control chosen-select" style="width:350px;" tabindex="2">
+                        </select>
+                    </div>
 
-                    <input type="text" id="user_department_textbox" class="form-control" placeholder="Department"/><br/>
 
                     <span id="userEmailRequiredBox" style="display: none; color: red">Email is invalid</span>
                     <input type="text" id="user_email_textbox" class="form-control" placeholder="Email"/><br/>
@@ -186,6 +218,7 @@ Modal-->
 <script>
     $(document).ready(
         function () {
+            initUiControls();
             getAuthenticatedUser();
             getAuthenticatedUserNavBar(giveAllUsers);
 
@@ -259,7 +292,7 @@ Modal-->
         $('#user_first_name_textbox').val("");
         $('#user_last_name_textbox').val("");
         $('#user_email_textbox').val("");
-        $('#user_department_textbox').val("");
+        $('#department_selection').val("");
         $('#user_password_textbox').val("");
         $('#user_permission_textbox').val("");
         $('#userModal').modal('show');
@@ -282,7 +315,7 @@ Modal-->
         } else if ($('#role_selection').val() == "") {
             $("#roleSelectionRequiredBox").show();
             result = false;
-        } else if ($('#user_department_textbox').val() == "") {
+        } else if ($('#department_selection').val() == null) {
             $("#userDepartmentRequiredBox").show();
             result = false;
         }
@@ -312,7 +345,7 @@ Modal-->
                                 lastName: $('#user_last_name_textbox').val(),
                                 password: $('#user_password_textbox').val(),
                                 persimissonsId: $('#role_selection').val(),
-                                department: $('#user_department_textbox').val(),
+                                department: $('#department_selection').val(),
                                 email: $('#user_email_textbox').val()
                             }
                         ),
@@ -351,20 +384,24 @@ Modal-->
 
         }
 
-        /*      function initUiControls() {
+         function initUiControls() {
 
-                  $('#company_established_textbox').datepicker(
-                      {
-                          dateFormat: 'yy-mm-dd',
-                          showButtonPanel: true,
-                          changeMonth: true,
-                          changeYear: true,
-                          showOtherMonths: true,
-                          selectOtherMonths: true,
-                          yearRange: "-300:+0"
-                      }
-                  );
-              }*/
+             $.ajax(
+                 {
+                     method: "GET",
+                     url: "/rest/get_departments",
+                     complete: function (response) {
+                         console.log(response.responseJSON);
+                         var departments = response.responseJSON;
+                         $('#department_selection').empty();
+                         for (var i = 0; i < departments.length; i++) {
+                             $('#department_selection').append('<option value="' + departments[i].name + '">' + departments[i].name + '</option>');
+                         }
+
+                     }
+                 }
+             )
+              }
 
         function editUser(userId) {
             $.ajax(
@@ -379,7 +416,7 @@ Modal-->
                         $('#user_first_name_textbox').val(user.firstName);
                         $('#user_last_name_textbox').val(user.lastName);
                         $('#user_email_textbox').val(user.email);
-                        $('#user_department_textbox').val(user.department);
+                        $('#department_selection').val(user.department);
                         $('#user_password_textbox').val(user.password);
                         $('#user_permission_textbox').val(user.persimissonsId);
                         $('#userModal').modal('show');
@@ -388,7 +425,6 @@ Modal-->
 
                 }
             );
-
 
         }
 
@@ -404,6 +440,29 @@ Modal-->
             document.getElementById("login").click();
         }
     });
+
+    function forgotPassword() {
+        $('#loginModal').modal('hide');
+        $('#forgetEmailModal').modal('show');
+    }
+
+    function sendConfimationEmail(email) {
+        $.ajax(
+            {
+
+                method: "GET",
+                url: "/rest/get_user_uuid_by_email?email=" + email,
+                dataType: "json",
+                complete: function (response) {
+                    console.log('email sent')
+                    $('#forgetEmailModal').modal('hide');
+
+                }
+            }
+        )
+
+    }
+
 
 
 </script>

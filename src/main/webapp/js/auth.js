@@ -32,6 +32,41 @@ function logInUser(successfulLoginCallback) {
 
 }
 
+function registerUser(successfulRegisterCallback) {
+
+    var email = $('#email').val();
+    var password = $('#password').val();
+
+    $.ajax(
+        {
+            url: '/rest/register_user',
+            method: 'POST',
+            data: {
+                'email': email,
+                'password': password
+            },
+            complete: function (result) {
+                //loginprosteduur lõpetanud
+                if (result.responseText == 'SUCCESS') {
+                    if(window.location.href.includes("login.html")){
+                        document.location = 'login.html';
+                    } else {
+                        if(successfulRegisterCallback != null){
+                            successfulRegisterCallback();
+                        }
+                    }
+                    $('#registerModal').modal('hide');
+                } else {
+                    $('#errorRegister').show();
+                }
+
+            }
+        }
+    )
+
+}
+
+
 function logOutUser(){
     $.ajax(
         {

@@ -9,6 +9,30 @@
 
 </head>
 <body>
+<div class="modal" id="forgetEmailModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Login</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                </div>
+                <span id="forgotEmail" style="display: none; color: red">Required</span>
+                <input type="text" id="forgottenemail" class="form-control" placeholder="Email"/><br/>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="sendEmailForgottenPassword" class="btn btn-primary"
+                        onclick="sendConfimationEmail($('#forgottenemail').val())">Send recovery Email
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="container" style="padding-top: 150px" ;>
     <div class="row justify-content-center" id="errorBox" style="display: none;">
         <div class=col-sm-4 style="color: red; font-weight: bold">
@@ -17,14 +41,50 @@
     </div>
 
 
+
     <div class="row justify-content-center" id="loginBox" style="display: none">
         <div class="col-sm-4">
             <input type="text" id="email" class="form-control" placeholder="Email" required="true"><br/>
             <input type="password" id="password" class="form-control" placeholder="Password" required="true"><br/>
             <button type="button" id="login" class="btn" onclick="logInUser();">Log In</button>
+            <button type="button" id="forgotpassword" class="btn btn-primary" onclick="forgotPassword()">Forgot password?</button>
+            <button type="button" id="register" class="btn" onclick="prepareUsersAddingInterface();">Register</button>
         </div>
     </div>
 
+
+    <div class="modal" id="registerModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Register</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="row justify-content-center" id="errorRegister" style="display: none;">
+                            <div class=col style="color: red; font-weight: bold">
+                                Registreerimise ebaõnnestus
+                            </div>
+                        </div>
+                        <span id="registerEmail" style="display: none; color: red">Required</span>
+                        <input type="text" id="register_email" class="form-control" placeholder="Email"/><br/>
+
+                        <span id="registerPassword" style="display: none; color: red">Required</span>
+                        <input type="password" id="register_password" class="form-control" placeholder="Password"/><br/>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" id="register_user" class="btn btn-primary"
+                                onclick="registerUser(postSuccessfulLoginActions)">Register
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="row justify-content-center" id="logoutBox" style="display: none">
         <div class="col-sm-4">
@@ -48,6 +108,56 @@
 
 <script>
 
+    function prepareUsersAddingInterface(userId) {
+
+        $('#user_id_field').val("0");
+        $('#user_first_name_textbox').val("");
+        $('#user_last_name_textbox').val("");
+        $('#user_email_textbox').val("");
+        $('#department_selection').val("");
+        $('#user_password_textbox').val("");
+        // $('#user_permission_textbox').val("");
+        $('#userModal').modal('show');
+    }
+
+    function saveChanges() {
+
+        if (isUserInfoValid()) {
+            var saveUrl = "";
+            saveUrl = "/rest/add_user";
+            }
+
+            $.ajax(
+                {
+                    method: "POST",
+                    url: saveUrl,
+                    dataType: "json",
+                    contentType: 'application/json',
+                    data: JSON.stringify(
+                        {
+                            id: $('#user_id_field').val() > 0 ? $('#user_id_field').val() : "0",
+                            firstName: $('#user_first_name_textbox').val(),
+                            lastName: $('#user_last_name_textbox').val(),
+                            password: $('#user_password_textbox').val(),
+                            // persimissonsId: $('#role_selection').val(),
+                            department: $('#department_selection').val(),
+                            email: $('#user_email_textbox').val()
+                        }
+                    ),
+                    complete: function (response) {
+                        $("#userDepartmentRequiredBox").hide();
+                        // $("#roleSelectionRequiredBox").hide();
+                        $("#userEmailRequiredBox").hide();
+                        $("#userpasswordRequiredBox").hide();
+                        $("#lastNameRequiredBox").hide();
+                        $("#firstNameRequiredBox").hide();
+                        $('#userModal').modal('hide');
+
+                    }
+                }
+            );
+    }
+
 
     $(document).ready(
         function () {
@@ -61,6 +171,28 @@
             document.getElementById("login").click();
         }
     });
+
+    function forgotPassword() {
+        $('#loginModal').modal('hide');
+        $('#forgetEmailModal').modal('show');
+    }
+
+    function sendConfimationEmail(email) {
+        $.ajax(
+            {
+
+                method: "GET",
+                url: "/rest/get_user_uuid_by_email?email=" + email,
+                dataType: "json",
+                complete: function (response) {
+                    console.log('email sent')
+                    $('#forgetEmailModal').modal('hide');
+
+                }
+            }
+        )
+
+    }
 
 
 
