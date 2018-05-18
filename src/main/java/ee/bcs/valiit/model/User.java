@@ -10,7 +10,7 @@ public class User {
     private int id;
     private String firstName;
     private String lastName;
-    private String persimissonsId;
+    private String persimissonsId = "user";
     private String department;
     private String password;
     private String email;

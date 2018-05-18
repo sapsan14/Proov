@@ -5,6 +5,7 @@
     <title>Meetings</title>
     <link rel="stylesheet" href="style/bootstrap.min.css"/>
     <link rel="stylesheet" href="style/jquery-ui.css"/>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -46,7 +47,7 @@
 
     <div class="row justify-content-center" : 250px>
         <div style="color: grey; border: 1px solid grey; border-radius: 3px; border-padding: 5px"></div>
-        Visit count: <span id="visitCount">0</span>
+        <!--Visit count: <span id="visitCount">0</span>-->
     </div>
 
     <table class="table">
@@ -443,7 +444,7 @@ Modal-->
         }
 
         var element = document.createElement('DIV');
-        element.textContent = "/feedback.html?uuid=" + meetingUuid;
+        element.textContent = "http://localhost:8080/feedback.html?uuid=" + meetingUuid;
         document.body.appendChild(element);
         selectElementText(element);
         document.execCommand('copy');

@@ -61,6 +61,7 @@ public class OmniMeterService {
 
     public static void addUser(User user) {
         //salvestame ettevõtte andmebaasi
+
         if (userDoesntExist(user.getEmail())) {
             String sql = "INSERT INTO user (first_name, last_name, password, role_id, department, email, user_uuid)" +
                     " VALUES ('" + user.getFirstName() + "' , '" + user.getLastName() + "' , '" + user.getPassword() + "' , '" + user.getPersimissonsId() + "' , '" + user.getDepartment() + "' , '" + user.getEmail() + "', '" + user.getUserUuid() + "')";
@@ -332,7 +333,9 @@ public class OmniMeterService {
         ResultSet result = executeSql(sql1);
         String email = null;
         try {
-            email = result.getString(0);
+            while (result.next()) {
+                email = result.getString("email");
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
